@@ -11,7 +11,7 @@ import { PlayerCard } from './PlayerCard';
 const noop = () => {};
 
 describe('screens render without crashing', () => {
-  let c = newCampaign('Smoke');
+  let c = newCampaign('Smoke', true);
   c = reduce(c, { type: 'toggleCombat' });
   c = reduce(c, { type: 'setFavorite', playerId: c.players[0].id, statId: 'force' });
   c = reduce(c, { type: 'learn', playerId: c.players[0].id, abilityId: 'swordsmanship' });

@@ -3,7 +3,7 @@ import { parseDice } from '../dice';
 import { exportCampaign } from '../portable';
 import type { Action } from '../reducer';
 import type { CampaignSummary } from '../storage';
-import type { AbilityDef, Campaign, StatKind } from '../types';
+import type { AbilityDef, Campaign, RaceDef, StatDef, StatKind } from '../types';
 import { download } from './parts';
 
 interface Props {
@@ -162,11 +162,169 @@ function PlayersTab({ c, dispatch }: Props) {
   );
 }
 
+type Dispatch = (a: Action) => void;
+
+function StatEdit({ c, stat, dispatch, onDone }: { c: Campaign; stat: StatDef; dispatch: Dispatch; onDone: () => void }) {
+  const [name, setName] = useState(stat.name);
+  const [parentId, setParentId] = useState(stat.parentId ?? '');
+  const blockers = c.abilities.filter((a) => a.statId === stat.id);
+  return (
+    <div className="edit-box">
+      <input value={name} onChange={(e) => setName(e.target.value)} />
+      {stat.kind === 'secondary' && (
+        <select value={parentId} onChange={(e) => setParentId(e.target.value)}>
+          <option value="">No parent stat</option>
+          {c.stats.filter((s) => s.kind === 'primary').map((s) => (
+            <option key={s.id} value={s.id}>under {s.name}</option>
+          ))}
+        </select>
+      )}
+      {blockers.length > 0 && <small className="muted">Can't delete: used by {blockers.map((a) => a.name).join(', ')}</small>}
+      <div className="form-row">
+        <button
+          className="primary"
+          onClick={() => {
+            dispatch({ type: 'editStat', id: stat.id, name, parentId: stat.kind === 'secondary' ? parentId || null : undefined });
+            onDone();
+          }}
+        >
+          Save
+        </button>
+        <button onClick={onDone}>Cancel</button>
+        <span className="spacer" />
+<button
+  className="danger"
+  disabled={blockers.length > 0}
+  onClick={() => {
+    if (window.confirm(`Delete ${stat.name}? Players lose their XP in it.`)) {
+      dispatch({ type: 'deleteStat', id: stat.id });
+      onDone();
+    }
+  }}
+>
+  Delete
+</button>
+      </div>
+    </div>
+  );
+}
+
+function RaceEdit({ race, dispatch, onDone }: { race: RaceDef; dispatch: Dispatch; onDone: () => void }) {
+  const [name, setName] = useState(race.name);
+  const [notes, setNotes] = useState(race.notes);
+  return (
+    <div className="edit-box">
+      <input value={name} onChange={(e) => setName(e.target.value)} />
+      <textarea placeholder="Notes" value={notes} onChange={(e) => setNotes(e.target.value)} />
+      <div className="form-row">
+        <button
+          className="primary"
+          onClick={() => {
+            dispatch({ type: 'editRace', id: race.id, name, notes });
+            onDone();
+          }}
+        >
+          Save
+        </button>
+        <button onClick={onDone}>Cancel</button>
+        <span className="spacer" />
+<button
+  className="danger"
+  onClick={() => {
+    if (window.confirm(`Delete ${race.name}? Players with it go back to no race.`)) {
+      dispatch({ type: 'deleteRace', id: race.id });
+      onDone();
+    }
+  }}
+>
+  Delete
+</button>
+      </div>
+    </div>
+  );
+}
+
+function AbilityEdit({ c, ability, dispatch, onDone }: { c: Campaign; ability: AbilityDef; dispatch: Dispatch; onDone: () => void }) {
+  const [f, setF] = useState({
+    name: ability.name,
+    kind: ability.kind,
+    statId: ability.statId,
+    unlock: ability.unlock,
+    requires: Object.entries(ability.requires)
+      .map(([id, n]) => `${c.stats.find((s) => s.id === id)?.name ?? id}:${n}`)
+      .join(', '),
+    ap: ability.apCost,
+    mana: ability.manaCost,
+    notes: ability.notes,
+  });
+  const save = () => {
+    dispatch({
+      type: 'editAbility',
+      id: ability.id,
+      patch: {
+        name: f.name,
+        kind: f.kind,
+        statId: f.statId,
+        unlock: f.unlock,
+        requires: parseRequires(f.requires, c),
+        apCost: f.ap,
+        manaCost: f.mana,
+        notes: f.notes,
+      },
+    });
+    onDone();
+  };
+  return (
+    <div className="edit-box">
+      <input value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} />
+      <select value={f.kind} onChange={(e) => setF({ ...f, kind: e.target.value as AbilityDef['kind'] })}>
+        <option value="technique">Technique (caps at {c.rules.techniqueCap})</option>
+        <option value="skill">Skill (no cap)</option>
+      </select>
+      <select value={f.statId} onChange={(e) => setF({ ...f, statId: e.target.value })}>
+        {c.stats.map((s) => (
+          <option key={s.id} value={s.id}>Linked stat: {s.name}</option>
+        ))}
+      </select>
+      <select value={f.unlock} onChange={(e) => setF({ ...f, unlock: e.target.value as AbilityDef['unlock'] })}>
+        <option value="auto">Unlocks automatically at stat levels</option>
+        <option value="dm">DM grants it</option>
+      </select>
+      <input placeholder="Needs, e.g. Force:4, Fire:1" value={f.requires} onChange={(e) => setF({ ...f, requires: e.target.value })} />
+      <label>AP cost<input type="number" min={0} value={f.ap} onChange={(e) => setF({ ...f, ap: Number(e.target.value) || 0 })} /></label>
+      <label>Mana cost<input type="number" min={0} value={f.mana} onChange={(e) => setF({ ...f, mana: Number(e.target.value) || 0 })} /></label>
+      <textarea placeholder="Notes" value={f.notes} onChange={(e) => setF({ ...f, notes: e.target.value })} />
+      <div className="form-row">
+        <button className="primary" onClick={save}>Save</button>
+        <button onClick={onDone}>Cancel</button>
+        <span className="spacer" />
+<button
+  className="danger"
+  onClick={() => {
+    if (window.confirm(`Delete ${ability.name}? Players lose it and its progress.`)) {
+      dispatch({ type: 'deleteAbility', id: ability.id });
+      onDone();
+    }
+  }}
+>
+  Delete
+</button>
+      </div>
+    </div>
+  );
+}
+
 function LibraryTab({ c, dispatch }: Props) {
   const [statName, setStatName] = useState('');
   const [statKind, setStatKind] = useState<StatKind>('secondary');
   const [parentId, setParentId] = useState('');
   const [raceName, setRaceName] = useState('');
+  const [editing, setEditing] = useState<string | null>(null);
+  const done = () => setEditing(null);
+  const toggle = (k: string) => setEditing(editing === k ? null : k);
+const statSel = c.stats.find((s) => editing === `stat:${s.id}`);
+const raceSel = c.races.find((r) => editing === `race:${r.id}`);
+const abSel = c.abilities.find((a) => editing === `ability:${a.id}`);
   const [ab, setAb] = useState({
     name: '',
     kind: 'technique' as AbilityDef['kind'],
@@ -269,16 +427,51 @@ function LibraryTab({ c, dispatch }: Props) {
         </button>
       </div>
 
-      <h4>In this campaign</h4>
-      <p className="muted">
-        <b>Stats:</b> {c.stats.map((s) => s.name).join(', ')}
-      </p>
-      <p className="muted">
-        <b>Races:</b> {c.races.map((r) => r.name).join(', ')}
-      </p>
-      <p className="muted">
-        <b>Abilities:</b> {c.abilities.map((a) => a.name).join(', ') || 'none'}
-      </p>
+            <h4>Edit existing</h4>
+
+      <h5>Stats</h5>
+      <div className="link-list">
+        {c.stats.map((s) => (
+          <button
+            key={s.id}
+            className={`link${s.kind === 'secondary' ? ' secondary' : ''}${editing === `stat:${s.id}` ? ' active' : ''}`}
+            title={s.kind}
+            onClick={() => toggle(`stat:${s.id}`)}
+          >
+            {s.name}
+          </button>
+        ))}
+      </div>
+      {statSel && <StatEdit key={statSel.id} c={c} stat={statSel} dispatch={dispatch} onDone={done} />}
+
+      <h5>Races</h5>
+      <div className="link-list">
+        {c.races.map((r) => (
+          <button
+            key={r.id}
+            className={`link${editing === `race:${r.id}` ? ' active' : ''}`}
+            onClick={() => toggle(`race:${r.id}`)}
+          >
+            {r.name}
+          </button>
+        ))}
+      </div>
+      {raceSel && <RaceEdit key={raceSel.id} race={raceSel} dispatch={dispatch} onDone={done} />}
+
+      <h5>Skills and techniques</h5>
+      <div className="link-list">
+        {c.abilities.map((a) => (
+          <button
+            key={a.id}
+            className={`link${editing === `ability:${a.id}` ? ' active' : ''}`}
+            title={a.kind}
+            onClick={() => toggle(`ability:${a.id}`)}
+          >
+            {a.name}
+          </button>
+        ))}
+      </div>
+      {abSel && <AbilityEdit key={abSel.id} c={c} ability={abSel} dispatch={dispatch} onDone={done} />}
     </div>
   );
 }

@@ -30,6 +30,12 @@ export type Action =
   | { type: 'addAbility'; def: Omit<AbilityDef, 'id'> }
   | { type: 'setRulesText'; text: string }
   | { type: 'setDice'; dice: string }
+  | { type: 'editStat'; id: string; name?: string; parentId?: string | null }
+  | { type: 'editRace'; id: string; name?: string; notes?: string }
+  | { type: 'editAbility'; id: string; patch: Partial<Omit<AbilityDef, 'id'>> }
+  |  { type: 'deleteStat'; id: string }
+  | { type: 'deleteRace'; id: string }
+  | { type: 'deleteAbility'; id: string }
   | { type: 'renameCampaign'; name: string };
 
 const MAX_LOG = 500;
@@ -269,6 +275,74 @@ export function reduce(prev: Campaign, action: Action): Campaign {
       const name = action.name.trim();
       if (!name || name === c.name) return prev;
       c.name = name;
+      return c;
+    }
+
+        case 'editStat': {
+      const s = c.stats.find((x) => x.id === action.id);
+      if (!s) return prev;
+      if (action.name?.trim()) s.name = action.name.trim();
+      if (action.parentId !== undefined && s.kind === 'secondary') {
+        if (action.parentId === null) delete s.parentId;
+        else if (c.stats.some((x) => x.id === action.parentId && x.kind === 'primary')) s.parentId = action.parentId;
+      }
+      log(c, `Edited stat: ${s.name}`);
+      return c;
+    }
+
+    case 'editRace': {
+      const r = c.races.find((x) => x.id === action.id);
+      if (!r) return prev;
+      if (action.name?.trim()) r.name = action.name.trim();
+      if (action.notes !== undefined) r.notes = action.notes;
+      log(c, `Edited race: ${r.name}`);
+      return c;
+    }
+
+    case 'editAbility': {
+      const a = c.abilities.find((x) => x.id === action.id);
+      if (!a) return prev;
+      const { name, ...rest } = action.patch;
+      Object.assign(a, rest);
+      if (name?.trim()) a.name = name.trim();
+      // keep players inside the (possibly new) cap
+      for (const p of c.players) {
+        if (a.id in p.abilities) p.abilities[a.id] = clampAbilityXp(a, p.abilities[a.id], c.rules);
+      }
+      log(c, `Edited ${a.kind}: ${a.name}`);
+      return c;
+    }
+
+        case 'deleteStat': {
+      const s = c.stats.find((x) => x.id === action.id);
+      // refuse while a skill/technique is linked to it
+      if (!s || c.abilities.some((a) => a.statId === s.id)) return prev;
+      c.stats = c.stats.filter((x) => x.id !== s.id);
+      for (const x of c.stats) if (x.parentId === s.id) delete x.parentId;
+      for (const a of c.abilities) delete a.requires[s.id];
+      for (const p of c.players) {
+        delete p.stats[s.id];
+        if (p.favoriteStatId === s.id) p.favoriteStatId = null;
+      }
+      log(c, `Deleted stat: ${s.name}`);
+      return c;
+    }
+
+    case 'deleteRace': {
+      const r = c.races.find((x) => x.id === action.id);
+      if (!r) return prev;
+      c.races = c.races.filter((x) => x.id !== r.id);
+      for (const p of c.players) if (p.raceId === r.id) p.raceId = null;
+      log(c, `Deleted race: ${r.name}`);
+      return c;
+    }
+
+    case 'deleteAbility': {
+      const a = c.abilities.find((x) => x.id === action.id);
+      if (!a) return prev;
+      c.abilities = c.abilities.filter((x) => x.id !== a.id);
+      for (const p of c.players) delete p.abilities[a.id];
+      log(c, `Deleted ${a.kind}: ${a.name}`);
       return c;
     }
   }

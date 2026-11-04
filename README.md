@@ -36,3 +36,34 @@ Run `npm run dev` or `npm run preview` on the laptop, then open `http://<laptop-
 - `src/reducer.ts` every change to a campaign (this is what undo/redo and later sync will use)
 - `src/defaults.ts` starter stats, races, example Fireball technique
 - `src/ui/` screens
+
+## Project Structure
+
+pact-maker/
+├── index.html page shell
+├── vite.config.ts Vite + PWA + test config
+├── public/icon.svg app icon
+└── src/
+├── main.tsx entry point
+├── App.tsx top bar, dashboard grid, opens modals/menu
+├── store.ts React hook: current campaign, undo/redo, autosave
+├── styles.css all styling (dark theme)
+│
+├── types.ts data shapes (Campaign, Player, StatDef, AbilityDef…)
+├── defaults.ts starter stats/races/abilities, newCampaign()
+├── xp.ts level curve, progress, modifiers (the XP math)
+├── reducer.ts every change to a campaign, as an Action
+├── history.ts undo/redo stacks
+├── storage.ts IndexedDB save/load
+├── portable.ts export/import campaign JSON
+├── dice.ts dice parsing and rolling
+│
+├── core.test.ts logic tests
+└── ui/
+├── PlayerCard.tsx dashboard card
+├── FocusView.tsx full-screen player view
+├── ActionModal.tsx award XP to many players/stats
+├── GrantModal.tsx hand out spendable XP
+├── Menu.tsx ☰ drawer (campaigns, players, library, rules, log, host)
+├── parts.tsx shared bits (Bar, Modal, download)
+└── render.test.tsx screen smoke tests

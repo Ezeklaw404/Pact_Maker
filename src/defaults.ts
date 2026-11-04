@@ -3,13 +3,13 @@ import { uid } from './xp';
 
 export const DEFAULT_STATS: StatDef[] = [
   { id: 'force', name: 'Force', kind: 'primary' },
+  { id: 'area', name: 'Area', kind: 'primary'},
   { id: 'skill', name: 'Skill', kind: 'primary' },
   { id: 'alacrity', name: 'Alacrity', kind: 'primary' },
   { id: 'poise', name: 'Poise', kind: 'primary' },
   { id: 'toughness', name: 'Toughness', kind: 'primary' },
   { id: 'grit', name: 'Grit', kind: 'primary' },
   { id: 'stamina', name: 'Stamina', kind: 'primary' },
-  { id: 'area', name: 'Area', kind: 'secondary', parentId: 'force' },
   { id: 'fire', name: 'Fire', kind: 'secondary' },
   { id: 'water', name: 'Water', kind: 'secondary' },
   { id: 'earth', name: 'Earth', kind: 'secondary' },
@@ -58,7 +58,7 @@ export function newPlayer(name: string): Player {
   };
 }
 
-export function newCampaign(name = 'New Campaign'): Campaign {
+export function newCampaign(name = 'New Campaign', withPlayers = false): Campaign {
   const now = Date.now();
   return {
     id: uid(),
@@ -71,7 +71,7 @@ export function newCampaign(name = 'New Campaign'): Campaign {
       { id: 'elf', name: 'Elf', notes: '' },
     ],
     abilities: structuredClone(DEFAULT_ABILITIES),
-    players: [newPlayer('Player 1'), newPlayer('Player 2'), newPlayer('Player 3')],
+    players: withPlayers ? [newPlayer('Player 1'), newPlayer('Player 2'), newPlayer('Player 3')] : [],
     log: [],
     rulesText: '# House rules\n\nWrite or import your rules here (Markdown or plain text).',
     createdAt: now,
