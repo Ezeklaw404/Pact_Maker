@@ -25,3 +25,7 @@ Thumbs.db
 coverage/
 .vite/
 *.tsbuildinfo
+
+
+#personal notes
+*thots.txt
