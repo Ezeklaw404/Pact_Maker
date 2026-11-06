@@ -12,7 +12,6 @@ interface Props {
 
 export function PlayerCard({ c, p, selected, onSelect, onOpen }: Props) {
   const primary = c.stats.filter((s) => s.kind === 'primary');
-  const extras = c.stats.filter((s) => s.kind === 'secondary' && statXp(p, s.id) > 0);
   const race = c.races.find((r) => r.id === p.raceId)?.name;
   const fav = c.stats.find((s) => s.id === p.favoriteStatId)?.name;
 
@@ -45,16 +44,6 @@ export function PlayerCard({ c, p, selected, onSelect, onOpen }: Props) {
           </div>
         ))}
       </div>
-
-      {extras.length > 0 && (
-        <div className="chips">
-          {extras.map((s) => (
-            <span className="chip" key={s.id}>
-              {s.name} {formatLevel(statXp(p, s.id), c.rules)}
-            </span>
-          ))}
-        </div>
-      )}
 
       <footer>
         <span>

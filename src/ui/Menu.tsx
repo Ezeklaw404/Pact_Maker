@@ -278,8 +278,8 @@ function AbilityEdit({ c, ability, dispatch, onDone }: { c: Campaign; ability: A
     <div className="edit-box">
       <input value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} />
       <select value={f.kind} onChange={(e) => setF({ ...f, kind: e.target.value as AbilityDef['kind'] })}>
-        <option value="technique">Technique (caps at {c.rules.techniqueCap})</option>
-        <option value="skill">Skill (no cap)</option>
+        <option value="technique">Technique</option>
+        <option value="skill">Skill</option>
       </select>
       <select value={f.statId} onChange={(e) => setF({ ...f, statId: e.target.value })}>
         {c.stats.map((s) => (
@@ -290,7 +290,7 @@ function AbilityEdit({ c, ability, dispatch, onDone }: { c: Campaign; ability: A
         <option value="auto">Unlocks automatically at stat levels</option>
         <option value="dm">DM grants it</option>
       </select>
-      <input placeholder="Needs, e.g. Force:4, Fire:1" value={f.requires} onChange={(e) => setF({ ...f, requires: e.target.value })} />
+      <input placeholder="e.g. Force:4, Fire:1" value={f.requires} onChange={(e) => setF({ ...f, requires: e.target.value })} />
       <label>AP cost<input type="number" min={0} value={f.ap} onChange={(e) => setF({ ...f, ap: Number(e.target.value) || 0 })} /></label>
       <label>Mana cost<input type="number" min={0} value={f.mana} onChange={(e) => setF({ ...f, mana: Number(e.target.value) || 0 })} /></label>
       <textarea placeholder="Notes" value={f.notes} onChange={(e) => setF({ ...f, notes: e.target.value })} />
