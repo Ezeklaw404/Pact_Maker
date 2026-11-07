@@ -1,14 +1,19 @@
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
 import { parseDice } from '../dice';
 import { exportCampaign } from '../portable';
 import type { Action } from '../reducer';
 import type { CampaignSummary } from '../storage';
 import type { AbilityDef, Campaign, RaceDef, StatDef, StatKind } from '../types';
-import { download } from './parts';
+import { CopyButton, download, Modal, renderMarkdown } from './parts';
+import type { Permission } from '../protocol';
+import type { HostApi } from '../useHost';
+import { viewFor } from '../view';
+import { PlayerScreen } from './PlayerScreen';
 
 interface Props {
   c: Campaign;
   index: CampaignSummary[];
+  host: HostApi;
   dispatch: (a: Action) => void;
   onOpen: (id: string) => void;
   onCreate: (name: string) => void;
@@ -26,18 +31,6 @@ const TABS: [Tab, string][] = [
   ['log', 'Log'],
   ['host', 'Host'],
 ];
-
-/** Tiny markdown: headings, bullets, paragraphs. */
-function renderMarkdown(text: string): ReactNode {
-  return text.split('\n').map((line, i) => {
-    if (/^###\s/.test(line)) return <h5 key={i}>{line.slice(4)}</h5>;
-    if (/^##\s/.test(line)) return <h4 key={i}>{line.slice(3)}</h4>;
-    if (/^#\s/.test(line)) return <h3 key={i}>{line.slice(2)}</h3>;
-    if (/^\s*[-*]\s/.test(line)) return <li key={i}>{line.replace(/^\s*[-*]\s/, '')}</li>;
-    if (!line.trim()) return <br key={i} />;
-    return <p key={i}>{line}</p>;
-  });
-}
 
 function parseRequires(text: string, c: Campaign): Record<string, number> {
   const out: Record<string, number> = {};
@@ -61,8 +54,14 @@ function CampaignsTab({ c, index, dispatch, onOpen, onCreate, onRemove, onImport
     <div>
       <h4>Current campaign</h4>
       <div className="form-row">
-        <input value={name} onChange={(e) => setName(e.target.value)} onBlur={() => dispatch({ type: 'renameCampaign', name })} />
-        <button onClick={() => download(`${c.name.replace(/[^a-z0-9]+/gi, '-')}.pactmaker.json`, exportCampaign(c))}>Export</button>
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          onBlur={() => dispatch({ type: 'renameCampaign', name })}
+        />
+        <button onClick={() => download(`${c.name.replace(/[^a-z0-9]+/gi, '-')}.pactmaker.json`, exportCampaign(c))}>
+          Export
+        </button>
       </div>
       <label className="stack">
         Standard roll
@@ -87,10 +86,7 @@ function CampaignsTab({ c, index, dispatch, onOpen, onCreate, onRemove, onImport
           </span>
           <span>
             {i.id !== c.id && <button onClick={() => onOpen(i.id)}>Open</button>}
-            <button
-              className="danger"
-              onClick={() => window.confirm(`Delete "${i.name}" forever?`) && onRemove(i.id)}
-            >
+            <button className="danger" onClick={() => window.confirm(`Delete "${i.name}" forever?`) && onRemove(i.id)}>
               Delete
             </button>
           </span>
@@ -137,7 +133,9 @@ function PlayersTab({ c, dispatch }: Props) {
     <div>
       {c.players.map((p) => (
         <div className="list-row" key={p.id}>
-          <span>{p.name}</span>
+          <span>
+            {p.name} {p.gmOnly && <em className="badge">GM only</em>}
+          </span>
           <button
             className="danger"
             onClick={() => window.confirm(`Remove ${p.name}?`) && dispatch({ type: 'removePlayer', playerId: p.id })}
@@ -156,15 +154,34 @@ function PlayersTab({ c, dispatch }: Props) {
         >
           Add player
         </button>
+        <button
+          title="Hidden from players"
+          onClick={() => {
+            dispatch({ type: 'addPlayer', name, gmOnly: true });
+            setName('');
+          }}
+        >
+          Add monster
+        </button>
       </div>
-      <p className="muted">Per-player permissions arrive with multiplayer.</p>
+      <p className="muted">Monsters are GM-only: players never see them.</p>
     </div>
   );
 }
 
 type Dispatch = (a: Action) => void;
 
-function StatEdit({ c, stat, dispatch, onDone }: { c: Campaign; stat: StatDef; dispatch: Dispatch; onDone: () => void }) {
+function StatEdit({
+  c,
+  stat,
+  dispatch,
+  onDone,
+}: {
+  c: Campaign;
+  stat: StatDef;
+  dispatch: Dispatch;
+  onDone: () => void;
+}) {
   const [name, setName] = useState(stat.name);
   const [parentId, setParentId] = useState(stat.parentId ?? '');
   const blockers = c.abilities.filter((a) => a.statId === stat.id);
@@ -174,17 +191,28 @@ function StatEdit({ c, stat, dispatch, onDone }: { c: Campaign; stat: StatDef; d
       {stat.kind === 'secondary' && (
         <select value={parentId} onChange={(e) => setParentId(e.target.value)}>
           <option value="">No parent stat</option>
-          {c.stats.filter((s) => s.kind === 'primary').map((s) => (
-            <option key={s.id} value={s.id}>under {s.name}</option>
-          ))}
+          {c.stats
+            .filter((s) => s.kind === 'primary')
+            .map((s) => (
+              <option key={s.id} value={s.id}>
+                under {s.name}
+              </option>
+            ))}
         </select>
       )}
-      {blockers.length > 0 && <small className="muted">Can't delete: used by {blockers.map((a) => a.name).join(', ')}</small>}
+      {blockers.length > 0 && (
+        <small className="muted">Can't delete: used by {blockers.map((a) => a.name).join(', ')}</small>
+      )}
       <div className="form-row">
         <button
           className="primary"
           onClick={() => {
-            dispatch({ type: 'editStat', id: stat.id, name, parentId: stat.kind === 'secondary' ? parentId || null : undefined });
+            dispatch({
+              type: 'editStat',
+              id: stat.id,
+              name,
+              parentId: stat.kind === 'secondary' ? parentId || null : undefined,
+            });
             onDone();
           }}
         >
@@ -192,18 +220,18 @@ function StatEdit({ c, stat, dispatch, onDone }: { c: Campaign; stat: StatDef; d
         </button>
         <button onClick={onDone}>Cancel</button>
         <span className="spacer" />
-<button
-  className="danger"
-  disabled={blockers.length > 0}
-  onClick={() => {
-    if (window.confirm(`Delete ${stat.name}? Players lose their XP in it.`)) {
-      dispatch({ type: 'deleteStat', id: stat.id });
-      onDone();
-    }
-  }}
->
-  Delete
-</button>
+        <button
+          className="danger"
+          disabled={blockers.length > 0}
+          onClick={() => {
+            if (window.confirm(`Delete ${stat.name}? Players lose their XP in it.`)) {
+              dispatch({ type: 'deleteStat', id: stat.id });
+              onDone();
+            }
+          }}
+        >
+          Delete
+        </button>
       </div>
     </div>
   );
@@ -228,23 +256,33 @@ function RaceEdit({ race, dispatch, onDone }: { race: RaceDef; dispatch: Dispatc
         </button>
         <button onClick={onDone}>Cancel</button>
         <span className="spacer" />
-<button
-  className="danger"
-  onClick={() => {
-    if (window.confirm(`Delete ${race.name}? Players with it go back to no race.`)) {
-      dispatch({ type: 'deleteRace', id: race.id });
-      onDone();
-    }
-  }}
->
-  Delete
-</button>
+        <button
+          className="danger"
+          onClick={() => {
+            if (window.confirm(`Delete ${race.name}? Players with it go back to no race.`)) {
+              dispatch({ type: 'deleteRace', id: race.id });
+              onDone();
+            }
+          }}
+        >
+          Delete
+        </button>
       </div>
     </div>
   );
 }
 
-function AbilityEdit({ c, ability, dispatch, onDone }: { c: Campaign; ability: AbilityDef; dispatch: Dispatch; onDone: () => void }) {
+function AbilityEdit({
+  c,
+  ability,
+  dispatch,
+  onDone,
+}: {
+  c: Campaign;
+  ability: AbilityDef;
+  dispatch: Dispatch;
+  onDone: () => void;
+}) {
   const [f, setF] = useState({
     name: ability.name,
     kind: ability.kind,
@@ -283,32 +321,51 @@ function AbilityEdit({ c, ability, dispatch, onDone }: { c: Campaign; ability: A
       </select>
       <select value={f.statId} onChange={(e) => setF({ ...f, statId: e.target.value })}>
         {c.stats.map((s) => (
-          <option key={s.id} value={s.id}>Linked stat: {s.name}</option>
+          <option key={s.id} value={s.id}>
+            Linked stat: {s.name}
+          </option>
         ))}
       </select>
       <select value={f.unlock} onChange={(e) => setF({ ...f, unlock: e.target.value as AbilityDef['unlock'] })}>
         <option value="auto">Unlocks automatically at stat levels</option>
         <option value="dm">DM grants it</option>
       </select>
-      <input placeholder="e.g. Force:4, Fire:1" value={f.requires} onChange={(e) => setF({ ...f, requires: e.target.value })} />
-      <label>AP cost<input type="number" min={0} value={f.ap} onChange={(e) => setF({ ...f, ap: Number(e.target.value) || 0 })} /></label>
-      <label>Mana cost<input type="number" min={0} value={f.mana} onChange={(e) => setF({ ...f, mana: Number(e.target.value) || 0 })} /></label>
+      <input
+        placeholder="e.g. Force:4, Fire:1"
+        value={f.requires}
+        onChange={(e) => setF({ ...f, requires: e.target.value })}
+      />
+      <label>
+        AP cost
+        <input type="number" min={0} value={f.ap} onChange={(e) => setF({ ...f, ap: Number(e.target.value) || 0 })} />
+      </label>
+      <label>
+        Mana cost
+        <input
+          type="number"
+          min={0}
+          value={f.mana}
+          onChange={(e) => setF({ ...f, mana: Number(e.target.value) || 0 })}
+        />
+      </label>
       <textarea placeholder="Notes" value={f.notes} onChange={(e) => setF({ ...f, notes: e.target.value })} />
       <div className="form-row">
-        <button className="primary" onClick={save}>Save</button>
+        <button className="primary" onClick={save}>
+          Save
+        </button>
         <button onClick={onDone}>Cancel</button>
         <span className="spacer" />
-<button
-  className="danger"
-  onClick={() => {
-    if (window.confirm(`Delete ${ability.name}? Players lose it and its progress.`)) {
-      dispatch({ type: 'deleteAbility', id: ability.id });
-      onDone();
-    }
-  }}
->
-  Delete
-</button>
+        <button
+          className="danger"
+          onClick={() => {
+            if (window.confirm(`Delete ${ability.name}? Players lose it and its progress.`)) {
+              dispatch({ type: 'deleteAbility', id: ability.id });
+              onDone();
+            }
+          }}
+        >
+          Delete
+        </button>
       </div>
     </div>
   );
@@ -322,9 +379,9 @@ function LibraryTab({ c, dispatch }: Props) {
   const [editing, setEditing] = useState<string | null>(null);
   const done = () => setEditing(null);
   const toggle = (k: string) => setEditing(editing === k ? null : k);
-const statSel = c.stats.find((s) => editing === `stat:${s.id}`);
-const raceSel = c.races.find((r) => editing === `race:${r.id}`);
-const abSel = c.abilities.find((a) => editing === `ability:${a.id}`);
+  const statSel = c.stats.find((s) => editing === `stat:${s.id}`);
+  const raceSel = c.races.find((r) => editing === `race:${r.id}`);
+  const abSel = c.abilities.find((a) => editing === `ability:${a.id}`);
   const [ab, setAb] = useState({
     name: '',
     kind: 'technique' as AbilityDef['kind'],
@@ -348,11 +405,13 @@ const abSel = c.abilities.find((a) => editing === `ability:${a.id}`);
         {statKind === 'secondary' && (
           <select value={parentId} onChange={(e) => setParentId(e.target.value)}>
             <option value="">No parent stat</option>
-            {c.stats.filter((s) => s.kind === 'primary').map((s) => (
-              <option key={s.id} value={s.id}>
-                under {s.name}
-              </option>
-            ))}
+            {c.stats
+              .filter((s) => s.kind === 'primary')
+              .map((s) => (
+                <option key={s.id} value={s.id}>
+                  under {s.name}
+                </option>
+              ))}
           </select>
         )}
         <button
@@ -396,14 +455,28 @@ const abSel = c.abilities.find((a) => editing === `ability:${a.id}`);
           <option value="auto">Unlocks automatically at stat levels</option>
           <option value="dm">DM grants it</option>
         </select>
-        <input placeholder="Needs, e.g. Force:4, Area:2, Fire:1" value={ab.requires} onChange={(e) => setAb({ ...ab, requires: e.target.value })} />
+        <input
+          placeholder="Needs, e.g. Force:4, Area:2, Fire:1"
+          value={ab.requires}
+          onChange={(e) => setAb({ ...ab, requires: e.target.value })}
+        />
         <label>
           AP cost
-          <input type="number" min={0} value={ab.ap} onChange={(e) => setAb({ ...ab, ap: Number(e.target.value) || 0 })} />
+          <input
+            type="number"
+            min={0}
+            value={ab.ap}
+            onChange={(e) => setAb({ ...ab, ap: Number(e.target.value) || 0 })}
+          />
         </label>
         <label>
           Mana cost
-          <input type="number" min={0} value={ab.mana} onChange={(e) => setAb({ ...ab, mana: Number(e.target.value) || 0 })} />
+          <input
+            type="number"
+            min={0}
+            value={ab.mana}
+            onChange={(e) => setAb({ ...ab, mana: Number(e.target.value) || 0 })}
+          />
         </label>
         <button
           onClick={() => {
@@ -427,7 +500,7 @@ const abSel = c.abilities.find((a) => editing === `ability:${a.id}`);
         </button>
       </div>
 
-            <h4>Edit existing</h4>
+      <h4>Edit existing</h4>
 
       <h5>Stats</h5>
       <div className="link-list">
@@ -482,7 +555,9 @@ function RulesTab({ c, dispatch }: Props) {
   return (
     <div>
       <div className="form-row">
-        <button onClick={() => (editing ? (dispatch({ type: 'setRulesText', text }), setEditing(false)) : setEditing(true))}>
+        <button
+          onClick={() => (editing ? (dispatch({ type: 'setRulesText', text }), setEditing(false)) : setEditing(true))}
+        >
           {editing ? 'Save' : 'Edit'}
         </button>
         <label className="file-btn">
@@ -517,7 +592,9 @@ function LogTab({ c }: Props) {
       {rows.length === 0 && <p className="muted">Nothing yet.</p>}
       {rows.map((l) => (
         <div className="log-row" key={l.id}>
-          <small className="muted">{new Date(l.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small>
+          <small className="muted">
+            {new Date(l.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </small>
           <span>{l.text}</span>
         </div>
       ))}
@@ -525,14 +602,90 @@ function LogTab({ c }: Props) {
   );
 }
 
-function HostTab() {
+function HostTab({ c, host }: Props) {
+  const players = c.players.filter((p) => !p.gmOnly);
+  const [preview, setPreview] = useState<string | null>(null);
+  const previewSession = host.sessions.find((s) => s.peerId === preview);
+  const joinLink = `${location.origin}/join?room=${host.room}`;
+
+  if (host.status !== 'on') {
+    return (
+      <div>
+        <p className="hint">
+          Start hosting to let players join from their own devices. They open the same address you use to reach this app
+          (your network IP, Radmin IP, or tunnel link, not "localhost") and type the room code.
+        </p>
+        <button className="primary" disabled={host.status === 'starting'} onClick={host.start}>
+          {host.status === 'starting' ? 'Starting…' : 'Start hosting'}
+        </button>
+        {host.error && (
+          <p className="err">
+            {host.error === 'Connection lost'
+              ? 'Could not reach the host server. Is "npm run host" running?'
+              : host.error}
+          </p>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div>
-      <p>Hosting and live sync are planned for after v1.</p>
-      <p className="muted">
-        The plan: you host with a room code, friends join in a plain browser with just a name, and you decide what each
-        player can do.
+      <p className="hint">
+        Players open this link (swap "localhost" for your network IP, Radmin IP, or tunnel link), or go to /join and
+        type the code.
       </p>
+      <div className="room">
+        <b className="room-code">{host.room}</b>
+        <CopyButton text={host.room} label="Copy room code" />
+      </div>
+      <div className="room">
+        <code className="join-link">{joinLink}</code>
+        <CopyButton text={joinLink} label="Copy join link" />
+      </div>
+
+      <h4>Connected ({host.sessions.length})</h4>
+      {host.sessions.length === 0 && <p className="muted">Nobody yet.</p>}
+      {host.sessions.map((s) => (
+        <div className="edit-box" key={s.peerId}>
+          <b>{s.name}</b>
+          <select value={s.playerId ?? ''} onChange={(e) => host.assign(s.peerId, e.target.value || null)}>
+            <option value="">No character (spectator)</option>
+            {players.map((p) => (
+              <option key={p.id} value={p.id}>
+                Plays {p.name}
+              </option>
+            ))}
+          </select>
+          <select value={s.permission} onChange={(e) => host.setPermission(s.peerId, e.target.value as Permission)}>
+            <option value="view">View only</option>
+            <option value="xp">Can add XP to own character</option>
+          </select>
+          <div className="form-row">
+            <button onClick={() => setPreview(s.peerId)}>View as player</button>
+            <button className="danger" onClick={() => host.kick(s.peerId)}>
+              Kick
+            </button>
+          </div>
+        </div>
+      ))}
+
+      {previewSession && (
+        <Modal title={`${previewSession.name}'s view`} onClose={() => setPreview(null)}>
+          <PlayerScreen
+            view={viewFor(c, previewSession.playerId)}
+            permission={previewSession.permission}
+            notice=""
+            onAward={() => {}}
+          />
+        </Modal>
+      )}
+
+      <div className="form-row">
+        <button className="danger" onClick={host.stop}>
+          Stop hosting
+        </button>
+      </div>
     </div>
   );
 }
@@ -561,7 +714,7 @@ export function Menu(props: Props) {
           {tab === 'library' && <LibraryTab {...props} />}
           {tab === 'rules' && <RulesTab {...props} />}
           {tab === 'log' && <LogTab {...props} />}
-          {tab === 'host' && <HostTab />}
+          {tab === 'host' && <HostTab {...props} />}
         </div>
       </aside>
     </div>

@@ -3,7 +3,7 @@ import { uid } from './xp';
 
 export const DEFAULT_STATS: StatDef[] = [
   { id: 'force', name: 'Force', kind: 'primary' },
-  { id: 'area', name: 'Area', kind: 'primary'},
+  { id: 'area', name: 'Area', kind: 'primary' },
   { id: 'skill', name: 'Skill', kind: 'primary' },
   { id: 'alacrity', name: 'Alacrity', kind: 'primary' },
   { id: 'poise', name: 'Poise', kind: 'primary' },

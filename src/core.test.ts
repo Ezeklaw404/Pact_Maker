@@ -4,15 +4,7 @@ import { parseDice, rollDice } from './dice';
 import { commit, createHistory, redo, undo } from './history';
 import { exportCampaign, importCampaign } from './portable';
 import { reduce } from './reducer';
-import {
-  cumXp,
-  formatLevel,
-  isMastered,
-  isUnlocked,
-  levelInfo,
-  levelToXp,
-  multiplier,
-} from './xp';
+import { cumXp, formatLevel, isMastered, isUnlocked, levelInfo, levelToXp, multiplier } from './xp';
 
 const sample = (name = 'Test') => newCampaign(name, true);
 const rules = { baseXp: 10, growth: 2, techniqueCap: 5, dice: '3d6' };
@@ -149,7 +141,16 @@ describe('techniques and skills', () => {
 
     c = reduce(c, {
       type: 'addAbility',
-      def: { name: 'Spark', kind: 'technique', statId: 'force', requires: {}, unlock: 'auto', apCost: 1, manaCost: 1, notes: '' },
+      def: {
+        name: 'Spark',
+        kind: 'technique',
+        statId: 'force',
+        requires: {},
+        unlock: 'auto',
+        apCost: 1,
+        manaCost: 1,
+        notes: '',
+      },
     });
     c = reduce(c, { type: 'setXp', playerId: pid, target: { type: 'ability', id: 'spark' }, xp: 100000 });
     const def = c.abilities.find((a) => a.id === 'spark')!;
@@ -175,7 +176,12 @@ describe('spendable xp', () => {
 
   it('cannot overspend', () => {
     const c = sample();
-    const next = reduce(c, { type: 'spend', playerId: c.players[0].id, target: { type: 'stat', id: 'fire' }, amount: 1 });
+    const next = reduce(c, {
+      type: 'spend',
+      playerId: c.players[0].id,
+      target: { type: 'stat', id: 'fire' },
+      amount: 1,
+    });
     expect(next).toBe(c);
   });
 });

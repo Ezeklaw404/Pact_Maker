@@ -24,10 +24,30 @@ export function ActionModal({ c, initialPlayers, dispatch, onClose }: Props) {
   const [base, setBase] = useState(1);
 
   const groups = [
-    { label: 'Primary stats', items: c.stats.filter((s) => s.kind === 'primary').map((s) => ({ key: keyOf({ type: 'stat', id: s.id }), name: s.name })) },
-    { label: 'Secondary stats', items: c.stats.filter((s) => s.kind === 'secondary').map((s) => ({ key: keyOf({ type: 'stat', id: s.id }), name: s.name })) },
-    { label: 'Skills', items: c.abilities.filter((a) => a.kind === 'skill').map((a) => ({ key: keyOf({ type: 'ability', id: a.id }), name: a.name })) },
-    { label: 'Techniques', items: c.abilities.filter((a) => a.kind === 'technique').map((a) => ({ key: keyOf({ type: 'ability', id: a.id }), name: a.name })) },
+    {
+      label: 'Primary stats',
+      items: c.stats
+        .filter((s) => s.kind === 'primary')
+        .map((s) => ({ key: keyOf({ type: 'stat', id: s.id }), name: s.name })),
+    },
+    {
+      label: 'Secondary stats',
+      items: c.stats
+        .filter((s) => s.kind === 'secondary')
+        .map((s) => ({ key: keyOf({ type: 'stat', id: s.id }), name: s.name })),
+    },
+    {
+      label: 'Skills',
+      items: c.abilities
+        .filter((a) => a.kind === 'skill')
+        .map((a) => ({ key: keyOf({ type: 'ability', id: a.id }), name: a.name })),
+    },
+    {
+      label: 'Techniques',
+      items: c.abilities
+        .filter((a) => a.kind === 'technique')
+        .map((a) => ({ key: keyOf({ type: 'ability', id: a.id }), name: a.name })),
+    },
   ].filter((g) => g.items.length);
 
   const apply = () => {

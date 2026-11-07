@@ -26,7 +26,12 @@ body,
 body {
   background: var(--bg);
   color: var(--text);
-  font: 15px/1.4 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font:
+    15px/1.4 system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
 }
 
 h1,
@@ -595,4 +600,84 @@ button.link.active {
 }
 button.link {
   font-size: 13px; /* was 15px */
+}
+
+/* hosting */
+button.live {
+  color: var(--ok);
+  border-color: var(--ok);
+}
+.room {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0 14px;
+}
+.room-code {
+  font-size: 28px;
+  letter-spacing: 0.15em;
+}
+
+/* player screen */
+.player-screen main {
+  max-width: 720px;
+  margin: 0 auto;
+}
+.combat-banner {
+  background: var(--accent);
+  color: #fff;
+  text-align: center;
+  padding: 6px;
+  font-weight: 600;
+}
+.sheet-name {
+  font-size: 22px;
+}
+.pools {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  color: var(--muted);
+}
+.level-num {
+  font-variant-numeric: tabular-nums;
+  font-size: 16px;
+}
+details.panel summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.join {
+  max-width: 360px;
+  margin: 12vh auto 0;
+  padding: 0 16px;
+  display: grid;
+  gap: 12px;
+}
+.join h1 {
+  font-size: 26px;
+}
+.join-link {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* copy button */
+button.copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 8px;
+}
+button.copy.ok {
+  color: var(--ok);
+  border-color: var(--ok);
+}
+button.copy.fail {
+  color: var(--accent-2);
+  border-color: var(--accent-2);
 }

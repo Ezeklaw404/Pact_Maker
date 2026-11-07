@@ -5,12 +5,14 @@ import { FocusView } from './ui/FocusView';
 import { GrantModal } from './ui/GrantModal';
 import { Menu } from './ui/Menu';
 import { PlayerCard } from './ui/PlayerCard';
+import { useHost } from './useHost';
 
 type Modal = 'action' | 'grant' | null;
 
 export function App() {
   const store = useStore();
   const { campaign: c, dispatch, undo, redo } = store;
+  const host = useHost(c, dispatch);
 
   const [focusId, setFocusId] = useState<string | null>(null);
   const [selected, setSelected] = useState(new Set<string>());
@@ -65,6 +67,11 @@ export function App() {
         </button>
         <h1>{c.name}</h1>
         <div className="spacer" />
+        {host.status === 'on' && (
+          <button className="live" onClick={() => setMenu(true)} title="Hosting: open the Host tab in the menu">
+            ● {host.room} · {host.sessions.length}
+          </button>
+        )}
         <button className={`toggle${c.combat ? ' on' : ''}`} onClick={() => dispatch({ type: 'toggleCombat' })}>
           ⚔ Combat {c.combat ? 'ON · 3x' : 'off'}
         </button>
@@ -82,7 +89,14 @@ export function App() {
 
       <main>
         {focused ? (
-          <FocusView key={focused.id} c={c} p={focused} dispatch={dispatch} onBack={() => setFocusId(null)} onToast={setToast} />
+          <FocusView
+            key={focused.id}
+            c={c}
+            p={focused}
+            dispatch={dispatch}
+            onBack={() => setFocusId(null)}
+            onToast={setToast}
+          />
         ) : (
           <>
             {c.players.length === 0 && <p className="empty">No players yet. Add some in the menu → Players.</p>}
@@ -133,10 +147,15 @@ export function App() {
             setMenu(false);
           }}
           onClose={() => setMenu(false)}
+          host={host}
         />
       )}
-      {modal === 'action' && <ActionModal c={c} initialPlayers={modalPlayers} dispatch={dispatch} onClose={() => setModal(null)} />}
-      {modal === 'grant' && <GrantModal c={c} initialPlayers={modalPlayers} dispatch={dispatch} onClose={() => setModal(null)} />}
+      {modal === 'action' && (
+        <ActionModal c={c} initialPlayers={modalPlayers} dispatch={dispatch} onClose={() => setModal(null)} />
+      )}
+      {modal === 'grant' && (
+        <GrantModal c={c} initialPlayers={modalPlayers} dispatch={dispatch} onClose={() => setModal(null)} />
+      )}
     </div>
   );
 }

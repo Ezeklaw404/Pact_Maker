@@ -1,14 +1,6 @@
 import type { AbilityDef, Campaign, Player, StatKind, Target } from './types';
 import { newPlayer } from './defaults';
-import {
-  clampAbilityXp,
-  formatLevel,
-  isUnlocked,
-  multiplier,
-  round4,
-  targetName,
-  uid,
-} from './xp';
+import { clampAbilityXp, formatLevel, isUnlocked, multiplier, round4, targetName, uid } from './xp';
 
 export type Action =
   | { type: 'award'; playerIds: string[]; targets: Target[]; base: number }
@@ -19,7 +11,7 @@ export type Action =
   | { type: 'setFavorite'; playerId: string; statId: string | null }
   | { type: 'setMisc'; playerId: string; on?: boolean; mult?: number }
   | { type: 'setPool'; playerId: string; pool: 'ap' | 'mana'; cur?: number; max?: number }
-  | { type: 'addPlayer'; name: string }
+  | { type: 'addPlayer'; name: string; gmOnly?: boolean }
   | { type: 'removePlayer'; playerId: string }
   | { type: 'renamePlayer'; playerId: string; name: string }
   | { type: 'setRace'; playerId: string; raceId: string | null }
@@ -33,7 +25,7 @@ export type Action =
   | { type: 'editStat'; id: string; name?: string; parentId?: string | null }
   | { type: 'editRace'; id: string; name?: string; notes?: string }
   | { type: 'editAbility'; id: string; patch: Partial<Omit<AbilityDef, 'id'>> }
-  |  { type: 'deleteStat'; id: string }
+  | { type: 'deleteStat'; id: string }
   | { type: 'deleteRace'; id: string }
   | { type: 'deleteAbility'; id: string }
   | { type: 'renameCampaign'; name: string };
@@ -41,7 +33,12 @@ export type Action =
 const MAX_LOG = 500;
 
 function slug(name: string, taken: string[]): string {
-  const base = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'item';
+  const base =
+    name
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '') || 'item';
   let id = base;
   let n = 2;
   while (taken.includes(id)) id = `${base}-${n++}`;
@@ -68,7 +65,7 @@ function addToTarget(c: Campaign, p: Player, t: Target, gain: number) {
 }
 
 function currentXp(p: Player, t: Target): number {
-  return t.type === 'stat' ? p.stats[t.id] ?? 0 : p.abilities[t.id] ?? 0;
+  return t.type === 'stat' ? (p.stats[t.id] ?? 0) : (p.abilities[t.id] ?? 0);
 }
 
 /** Pure: returns a new campaign, or the same object if nothing changed. */
@@ -159,7 +156,10 @@ export function reduce(prev: Campaign, action: Action): Campaign {
       const p = findPlayer(c, action.playerId);
       if (!p) return prev;
       p.favoriteStatId = action.statId;
-      log(c, `${p.name}: favorite stat ${action.statId ? targetName(c, { type: 'stat', id: action.statId }) : 'cleared'}`);
+      log(
+        c,
+        `${p.name}: favorite stat ${action.statId ? targetName(c, { type: 'stat', id: action.statId }) : 'cleared'}`,
+      );
       return c;
     }
 
@@ -184,9 +184,11 @@ export function reduce(prev: Campaign, action: Action): Campaign {
     }
 
     case 'addPlayer': {
-      const name = action.name.trim() || `Player ${c.players.length + 1}`;
-      c.players.push(newPlayer(name));
-      log(c, `${name} joined the party`);
+      const name = action.name.trim() || (action.gmOnly ? 'Monster' : `Player ${c.players.length + 1}`);
+      const p = newPlayer(name);
+      if (action.gmOnly) p.gmOnly = true;
+      c.players.push(p);
+      log(c, action.gmOnly ? `${name} added (GM only)` : `${name} joined the party`);
       return c;
     }
 
@@ -237,7 +239,10 @@ export function reduce(prev: Campaign, action: Action): Campaign {
     case 'addStat': {
       const name = action.name.trim();
       if (!name) return prev;
-      const id = slug(name, c.stats.map((s) => s.id));
+      const id = slug(
+        name,
+        c.stats.map((s) => s.id),
+      );
       const parentId =
         action.kind === 'secondary' && c.stats.some((s) => s.id === action.parentId && s.kind === 'primary')
           ? action.parentId
@@ -250,7 +255,14 @@ export function reduce(prev: Campaign, action: Action): Campaign {
     case 'addRace': {
       const name = action.name.trim();
       if (!name) return prev;
-      c.races.push({ id: slug(name, c.races.map((r) => r.id)), name, notes: '' });
+      c.races.push({
+        id: slug(
+          name,
+          c.races.map((r) => r.id),
+        ),
+        name,
+        notes: '',
+      });
       log(c, `New race: ${name}`);
       return c;
     }
@@ -258,7 +270,14 @@ export function reduce(prev: Campaign, action: Action): Campaign {
     case 'addAbility': {
       const name = action.def.name.trim();
       if (!name) return prev;
-      c.abilities.push({ ...action.def, name, id: slug(name, c.abilities.map((a) => a.id)) });
+      c.abilities.push({
+        ...action.def,
+        name,
+        id: slug(
+          name,
+          c.abilities.map((a) => a.id),
+        ),
+      });
       log(c, `New ${action.def.kind}: ${name}`);
       return c;
     }
@@ -278,7 +297,7 @@ export function reduce(prev: Campaign, action: Action): Campaign {
       return c;
     }
 
-        case 'editStat': {
+    case 'editStat': {
       const s = c.stats.find((x) => x.id === action.id);
       if (!s) return prev;
       if (action.name?.trim()) s.name = action.name.trim();
@@ -313,7 +332,7 @@ export function reduce(prev: Campaign, action: Action): Campaign {
       return c;
     }
 
-        case 'deleteStat': {
+    case 'deleteStat': {
       const s = c.stats.find((x) => x.id === action.id);
       // refuse while a skill/technique is linked to it
       if (!s || c.abilities.some((a) => a.statId === s.id)) return prev;

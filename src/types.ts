@@ -56,6 +56,8 @@ export interface Player {
   mana: Pool;
   /** Generic xp the player can spend on secondary stats, skills, techniques. */
   spendableXp: number;
+  /** GM-only sheet (monsters, NPCs). Never sent to players. */
+  gmOnly?: boolean;
 }
 
 export interface Rules {
