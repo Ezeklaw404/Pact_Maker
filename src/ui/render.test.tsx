@@ -7,8 +7,21 @@ import { FocusView } from './FocusView';
 import { GrantModal } from './GrantModal';
 import { Menu } from './Menu';
 import { PlayerCard } from './PlayerCard';
+import type { HostApi } from '../useHost';
 
 const noop = () => {};
+
+const host: HostApi = {
+  status: 'off',
+  room: '',
+  error: '',
+  sessions: [],
+  start: noop,
+  stop: noop,
+  setPermission: noop,
+  assign: noop,
+  kick: noop,
+};
 
 describe('screens render without crashing', () => {
   let c = newCampaign('Smoke', true);
@@ -39,11 +52,23 @@ describe('screens render without crashing', () => {
 
   it('modals and menu render', () => {
     const ids = c.players.map((x) => x.id);
-    expect(renderToString(<ActionModal c={c} initialPlayers={ids} dispatch={noop} onClose={noop} />)).toContain('Perform action');
+    expect(renderToString(<ActionModal c={c} initialPlayers={ids} dispatch={noop} onClose={noop} />)).toContain(
+      'Perform action',
+    );
     expect(renderToString(<GrantModal c={c} initialPlayers={ids} dispatch={noop} onClose={noop} />)).toContain('Grant');
     expect(
       renderToString(
-        <Menu c={c} index={[]} dispatch={noop} onOpen={noop} onCreate={noop} onRemove={noop} onImport={noop} onClose={noop} />,
+        <Menu
+          c={c}
+          host={host}
+          index={[]}
+          dispatch={noop}
+          onOpen={noop}
+          onCreate={noop}
+          onRemove={noop}
+          onImport={noop}
+          onClose={noop}
+        />,
       ),
     ).toContain('Campaigns');
   });

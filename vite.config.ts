@@ -15,12 +15,13 @@ export default defineConfig({
         theme_color: '#14161c',
         background_color: '#14161c',
         display: 'standalone',
-        icons: [
-          { src: 'icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any maskable' },
-        ],
+        icons: [{ src: 'icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any maskable' }],
       },
     }),
   ],
+  server: {
+    proxy: { '/ws': { target: 'ws://localhost:3000', ws: true } },
+  },
   test: {
     environment: 'node',
     include: ['src/**/*.test.{ts,tsx}'],

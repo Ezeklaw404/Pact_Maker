@@ -75,18 +75,17 @@ export function statXp(p: Player, statId: string): number {
 export function statLevel(p: Player, statId: string, rules: Rules): number {
   return levelInfo(statXp(p, statId), rules).level;
 }
-
-export function meetsRequirements(c: Campaign, p: Player, def: AbilityDef): boolean {
+export function meetsRequirements(c: Pick<Campaign, 'rules'>, p: Player, def: AbilityDef): boolean {
   return Object.entries(def.requires).every(([statId, min]) => statLevel(p, statId, c.rules) >= min);
 }
 
-export function isUnlocked(c: Campaign, p: Player, def: AbilityDef): boolean {
+export function isUnlocked(c: Pick<Campaign, 'rules'>, p: Player, def: AbilityDef): boolean {
   if (def.unlock === 'auto') return meetsRequirements(c, p, def);
   return def.id in p.abilities;
 }
 
 /** Combined xp multiplier for one player and one target. */
-export function multiplier(c: Campaign, p: Player, target: Target): number {
+export function multiplier(c: Pick<Campaign, 'combat' | 'stats' | 'abilities'>, p: Player, target: Target): number {
   let m = 1;
   if (c.combat) m *= 3;
   if (p.misc.on) m *= p.misc.mult;
@@ -101,7 +100,7 @@ export function multiplier(c: Campaign, p: Player, target: Target): number {
   return round4(m);
 }
 
-export function targetName(c: Campaign, t: Target): string {
+export function targetName(c: Pick<Campaign, 'stats' | 'abilities'>, t: Target): string {
   if (t.type === 'stat') return c.stats.find((s) => s.id === t.id)?.name ?? t.id;
   return c.abilities.find((a) => a.id === t.id)?.name ?? t.id;
 }

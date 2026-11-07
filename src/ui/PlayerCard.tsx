@@ -19,7 +19,9 @@ export function PlayerCard({ c, p, selected, onSelect, onOpen }: Props) {
     <article className={`card${c.combat ? ' combat' : ''}${selected ? ' selected' : ''}`} onClick={onOpen}>
       <header>
         <div>
-          <h3>{p.name}</h3>
+          <h3>
+            {p.name} {p.gmOnly && <em className="badge">GM only</em>}
+          </h3>
           <small>
             {race ?? 'No race'}
             {fav ? ` · ★ ${fav}` : ''}

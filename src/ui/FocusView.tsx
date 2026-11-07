@@ -71,7 +71,15 @@ function Row(r: RowProps) {
   );
 }
 
-function PoolCtl({ label, pool, onChange }: { label: string; pool: Pool; onChange: (cur?: number, max?: number) => void }) {
+function PoolCtl({
+  label,
+  pool,
+  onChange,
+}: {
+  label: string;
+  pool: Pool;
+  onChange: (cur?: number, max?: number) => void;
+}) {
   return (
     <div className="pool">
       <span>{label}</span>
@@ -161,7 +169,9 @@ export function FocusView({ c, p, dispatch, onBack, onToast }: Props) {
         xp={xp}
         full={mastered}
         badge={mastered ? 'Mastered' : undefined}
-        sub={[targetName(c, { type: 'stat', id: a.statId }), cost, cap ? `max level ${cap}` : ''].filter(Boolean).join(' · ')}
+        sub={[targetName(c, { type: 'stat', id: a.statId }), cost, cap ? `max level ${cap}` : '']
+          .filter(Boolean)
+          .join(' · ')}
         mult={multiplier(c, p, t)}
         checked={picked.has(keyOf(t))}
         onCheck={() => flip(t)}
@@ -170,7 +180,11 @@ export function FocusView({ c, p, dispatch, onBack, onToast }: Props) {
         onEdit={() => edit(t, xp)}
         extra={
           a.unlock === 'dm' ? (
-            <button className="danger" title="Remove from player" onClick={() => dispatch({ type: 'forget', playerId: p.id, abilityId: a.id })}>
+            <button
+              className="danger"
+              title="Remove from player"
+              onClick={() => dispatch({ type: 'forget', playerId: p.id, abilityId: a.id })}
+            >
               ✕
             </button>
           ) : undefined
@@ -191,7 +205,9 @@ export function FocusView({ c, p, dispatch, onBack, onToast }: Props) {
       .join(', ') || 'no requirements';
 
   const spendOptions = [
-    ...c.stats.filter((s) => s.kind === 'secondary').map((s) => ({ key: keyOf({ type: 'stat', id: s.id }), name: s.name })),
+    ...c.stats
+      .filter((s) => s.kind === 'secondary')
+      .map((s) => ({ key: keyOf({ type: 'stat', id: s.id }), name: s.name })),
     ...unlocked.map((a) => ({ key: keyOf({ type: 'ability', id: a.id }), name: a.name })),
   ];
 
@@ -224,7 +240,10 @@ export function FocusView({ c, p, dispatch, onBack, onToast }: Props) {
       <div className="panel settings">
         <label>
           Race
-          <select value={p.raceId ?? ''} onChange={(e) => dispatch({ type: 'setRace', playerId: p.id, raceId: e.target.value || null })}>
+          <select
+            value={p.raceId ?? ''}
+            onChange={(e) => dispatch({ type: 'setRace', playerId: p.id, raceId: e.target.value || null })}
+          >
             <option value="">None</option>
             {c.races.map((r) => (
               <option key={r.id} value={r.id}>
@@ -235,7 +254,10 @@ export function FocusView({ c, p, dispatch, onBack, onToast }: Props) {
         </label>
         <label>
           Favorite stat (2x)
-          <select value={p.favoriteStatId ?? ''} onChange={(e) => dispatch({ type: 'setFavorite', playerId: p.id, statId: e.target.value || null })}>
+          <select
+            value={p.favoriteStatId ?? ''}
+            onChange={(e) => dispatch({ type: 'setFavorite', playerId: p.id, statId: e.target.value || null })}
+          >
             <option value="">None</option>
             {c.stats.map((s) => (
               <option key={s.id} value={s.id}>
@@ -245,7 +267,11 @@ export function FocusView({ c, p, dispatch, onBack, onToast }: Props) {
           </select>
         </label>
         <label className="inline">
-          <input type="checkbox" checked={p.misc.on} onChange={(e) => dispatch({ type: 'setMisc', playerId: p.id, on: e.target.checked })} />
+          <input
+            type="checkbox"
+            checked={p.misc.on}
+            onChange={(e) => dispatch({ type: 'setMisc', playerId: p.id, on: e.target.checked })}
+          />
           Misc boost
           <input
             key={p.misc.mult}
@@ -261,8 +287,16 @@ export function FocusView({ c, p, dispatch, onBack, onToast }: Props) {
 
       <div className="panel">
         <h4>Resources</h4>
-        <PoolCtl label="AP" pool={p.ap} onChange={(cur, max) => dispatch({ type: 'setPool', playerId: p.id, pool: 'ap', cur, max })} />
-        <PoolCtl label="Mana" pool={p.mana} onChange={(cur, max) => dispatch({ type: 'setPool', playerId: p.id, pool: 'mana', cur, max })} />
+        <PoolCtl
+          label="AP"
+          pool={p.ap}
+          onChange={(cur, max) => dispatch({ type: 'setPool', playerId: p.id, pool: 'ap', cur, max })}
+        />
+        <PoolCtl
+          label="Mana"
+          pool={p.mana}
+          onChange={(cur, max) => dispatch({ type: 'setPool', playerId: p.id, pool: 'mana', cur, max })}
+        />
         <div className="pool">
           <span>Spendable XP</span>
           <b className="gold">{p.spendableXp}</b>
@@ -274,7 +308,13 @@ export function FocusView({ c, p, dispatch, onBack, onToast }: Props) {
               </option>
             ))}
           </select>
-          <input type="number" min={1} step="any" value={spendAmt} onChange={(e) => setSpendAmt(Number(e.target.value) || 0)} />
+          <input
+            type="number"
+            min={1}
+            step="any"
+            value={spendAmt}
+            onChange={(e) => setSpendAmt(Number(e.target.value) || 0)}
+          />
           <button
             disabled={!spendKey || spendAmt <= 0 || spendAmt > p.spendableXp}
             onClick={() => dispatch({ type: 'spend', playerId: p.id, target: fromKey(spendKey), amount: spendAmt })}
