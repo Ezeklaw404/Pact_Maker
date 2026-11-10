@@ -779,3 +779,16 @@ button.copy.fail {
 button.ap-dot {
   cursor: pointer;
 }
+
+/* host tab: one block per way to connect */
+.link-block {
+  margin: 10px 0;
+}
+.link-label {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.link-label .muted {
+  font-weight: 400;
+}

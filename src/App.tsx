@@ -3,7 +3,7 @@ import { useStore } from './store';
 import { ActionModal } from './ui/ActionModal';
 import { FocusView } from './ui/FocusView';
 import { GrantModal } from './ui/GrantModal';
-import { Menu } from './ui/Menu';
+import { Menu, type Tab } from './ui/Menu';
 import { PlayerCard } from './ui/PlayerCard';
 import { useHost } from './useHost';
 import { RestModal } from './ui/RestModal';
@@ -17,7 +17,7 @@ export function App() {
 
   const [focusId, setFocusId] = useState<string | null>(null);
   const [selected, setSelected] = useState(new Set<string>());
-  const [menu, setMenu] = useState(false);
+  const [menu, setMenu] = useState<Tab | null>(null);
   const [modal, setModal] = useState<Modal>(null);
   const [toast, setToast] = useState('');
 
@@ -63,13 +63,13 @@ export function App() {
   return (
     <div className={`app${c.combat ? ' in-combat' : ''}`}>
       <header className="topbar">
-        <button className="icon" onClick={() => setMenu(true)} aria-label="Menu">
+        <button className="icon" onClick={() => setMenu('campaigns')} aria-label="Menu">
           ☰
         </button>
         <h1>{c.name}</h1>
         <div className="spacer" />
         {host.status === 'on' && (
-          <button className="live" onClick={() => setMenu(true)} title="Hosting: open the Host tab in the menu">
+          <button className="live" onClick={() => setMenu('host')} title="Hosting: open the Host tab in the menu">
             ● {host.room} · {host.sessions.length}
           </button>
         )}
@@ -126,6 +126,7 @@ export function App() {
 
       {menu && (
         <Menu
+          initialTab={menu}
           c={c}
           index={store.index}
           dispatch={dispatch}
@@ -133,22 +134,22 @@ export function App() {
             store.open(id);
             setFocusId(null);
             setSelected(new Set());
-            setMenu(false);
+            setMenu(null);
           }}
           onCreate={(name) => {
             store.create(name);
             setFocusId(null);
             setSelected(new Set());
-            setMenu(false);
+            setMenu(null);
           }}
           onRemove={store.remove}
           onImport={(text) => {
             store.importText(text);
             setFocusId(null);
             setSelected(new Set());
-            setMenu(false);
+            setMenu(null);
           }}
-          onClose={() => setMenu(false)}
+          onClose={() => setMenu(null)}
           host={host}
         />
       )}

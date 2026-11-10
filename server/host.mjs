@@ -7,6 +7,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { WebSocketServer } from 'ws';
 import { isHostPcRequest } from './access.mjs';
+import { findTunnel, listAddresses } from './network.mjs';
 
 const PORT = Number(process.env.PORT) || 3000;
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -108,6 +109,11 @@ async function campaignApi(req, res, urlPath) {
   return sendJson(res, 405, { error: 'Method not allowed' });
 }
 
+// How players can reach this PC (host PC only: it lists your network addresses).
+async function networkApi(req, res) {
+  if (!isHostPcRequest(req)) return sendJson(res, 403, { error: 'Host PC only' });
+  sendJson(res, 200, { port: PORT, addresses: listAddresses(), tunnel: await findTunnel() });
+}
 // ---------- static files ----------
 const server = http.createServer((req, res) => {
   let urlPath;
@@ -118,6 +124,10 @@ const server = http.createServer((req, res) => {
     return res.end();
   }
 
+  if (urlPath === '/api/network') {
+    networkApi(req, res).catch(() => sendJson(res, 500, { error: 'Server error' }));
+    return;
+  }
   if (urlPath.startsWith('/api/')) {
     campaignApi(req, res, urlPath).catch(() => {
       if (!res.headersSent) sendJson(res, 500, { error: 'Server error' });

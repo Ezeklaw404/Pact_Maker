@@ -9,6 +9,8 @@ import type { Permission } from '../protocol';
 import type { HostApi } from '../useHost';
 import { viewFor } from '../view';
 import { PlayerScreen } from './PlayerScreen';
+import { joinLinks, TUNNEL_COMMAND } from '../network';
+import { useNetwork } from '../useNetwork';
 
 interface Props {
   c: Campaign;
@@ -20,9 +22,10 @@ interface Props {
   onRemove: (id: string) => void;
   onImport: (text: string) => void;
   onClose: () => void;
+  initialTab?: Tab;
 }
 
-type Tab = 'campaigns' | 'players' | 'library' | 'rules' | 'log' | 'host';
+export type Tab = 'campaigns' | 'players' | 'library' | 'rules' | 'log' | 'host';
 const TABS: [Tab, string][] = [
   ['campaigns', 'Campaigns'],
   ['players', 'Players'],
@@ -606,15 +609,13 @@ function HostTab({ c, host }: Props) {
   const players = c.players.filter((p) => !p.gmOnly);
   const [preview, setPreview] = useState<string | null>(null);
   const previewSession = host.sessions.find((s) => s.peerId === preview);
-  const joinLink = `${location.origin}/join?room=${host.room}`;
+  const { info, loaded } = useNetwork();
+  const links = joinLinks(info, host.room, location.origin);
 
   if (host.status !== 'on') {
     return (
       <div>
-        <p className="hint">
-          Start hosting to let players join from their own devices. They open the same address you use to reach this app
-          (your network IP, Radmin IP, or tunnel link, not "localhost") and type the room code.
-        </p>
+        <p className="hint">Start hosting to let players join from their own devices.</p>
         <button className="primary" disabled={host.status === 'starting'} onClick={host.start}>
           {host.status === 'starting' ? 'Starting…' : 'Start hosting'}
         </button>
@@ -631,18 +632,32 @@ function HostTab({ c, host }: Props) {
 
   return (
     <div>
-      <p className="hint">
-        Players open this link (swap "localhost" for your network IP, Radmin IP, or tunnel link), or go to /join and
-        type the code.
-      </p>
       <div className="room">
         <b className="room-code">{host.room}</b>
         <CopyButton text={host.room} label="Copy room code" />
       </div>
-      <div className="room">
-        <code className="join-link">{joinLink}</code>
-        <CopyButton text={joinLink} label="Copy join link" />
-      </div>
+      {links.map((l) => (
+        <div className="link-block" key={l.id}>
+          <div className="link-label">
+            {l.label} <span className="muted">{l.note}</span>
+          </div>
+          <div className="room">
+            <code className="join-link">{l.url}</code>
+            <CopyButton text={l.url} label={`Copy ${l.label} link`} />
+          </div>
+        </div>
+      ))}
+      {loaded && info && !info.tunnel && (
+        <div className="link-block">
+          <div className="link-label">
+            Internet <span className="muted">Not running. Start it in a second terminal:</span>
+          </div>
+          <div className="room">
+            <code className="join-link">{TUNNEL_COMMAND}</code>
+            <CopyButton text={TUNNEL_COMMAND} label="Copy tunnel command" />
+          </div>
+        </div>
+      )}
 
       <h4>Connected ({host.sessions.length})</h4>
       {host.sessions.length === 0 && <p className="muted">Nobody yet.</p>}
@@ -692,7 +707,7 @@ function HostTab({ c, host }: Props) {
 }
 
 export function Menu(props: Props) {
-  const [tab, setTab] = useState<Tab>('campaigns');
+  const [tab, setTab] = useState<Tab>(props.initialTab ?? 'campaigns');
   return (
     <div className="overlay left" onClick={props.onClose}>
       <aside className="drawer" onClick={(e) => e.stopPropagation()}>
