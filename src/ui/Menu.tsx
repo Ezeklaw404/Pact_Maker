@@ -441,19 +441,19 @@ function LibraryTab({ c, dispatch }: Props) {
       <div className="form-grid">
         <input placeholder="Name" value={ab.name} onChange={(e) => setAb({ ...ab, name: e.target.value })} />
         <select value={ab.kind} onChange={(e) => setAb({ ...ab, kind: e.target.value as AbilityDef['kind'] })}>
-          <option value="technique">Technique (caps at {c.rules.techniqueCap})</option>
-          <option value="skill">Skill (no cap)</option>
+          <option value="technique">Technique</option>
+          <option value="skill">Skill</option>
         </select>
         <select value={ab.statId} onChange={(e) => setAb({ ...ab, statId: e.target.value })}>
           {c.stats.map((s) => (
             <option key={s.id} value={s.id}>
-              Linked stat: {s.name}
+              Primary stat: {s.name}
             </option>
           ))}
         </select>
         <select value={ab.unlock} onChange={(e) => setAb({ ...ab, unlock: e.target.value as AbilityDef['unlock'] })}>
-          <option value="auto">Unlocks automatically at stat levels</option>
-          <option value="dm">DM grants it</option>
+          <option value="auto">Unlocks at stat levels</option>
+          <option value="dm">DM granted</option>
         </select>
         <input
           placeholder="Needs, e.g. Force:4, Area:2, Fire:1"
@@ -659,7 +659,8 @@ function HostTab({ c, host }: Props) {
           </select>
           <select value={s.permission} onChange={(e) => host.setPermission(s.peerId, e.target.value as Permission)}>
             <option value="view">View only</option>
-            <option value="xp">Can add XP to own character</option>
+            <option value="edit">Edit own HP, mana, AP</option>
+            <option value="admin">Admin (also XP and maximums)</option>
           </select>
           <div className="form-row">
             <button onClick={() => setPreview(s.peerId)}>View as player</button>
@@ -676,7 +677,7 @@ function HostTab({ c, host }: Props) {
             view={viewFor(c, previewSession.playerId)}
             permission={previewSession.permission}
             notice=""
-            onAward={() => {}}
+            onRequest={() => {}}
           />
         </Modal>
       )}

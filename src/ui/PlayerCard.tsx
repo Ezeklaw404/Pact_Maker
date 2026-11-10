@@ -1,6 +1,7 @@
 import type { Campaign, Player } from '../types';
 import { formatLevel, statXp } from '../xp';
 import { Bar } from './parts';
+import { Vitals } from './Vitals';
 
 interface Props {
   c: Campaign;
@@ -36,7 +37,7 @@ export function PlayerCard({ c, p, selected, onSelect, onOpen }: Props) {
           onChange={onSelect}
         />
       </header>
-
+      <Vitals p={p} />
       <div className="stat-list">
         {primary.map((s) => (
           <div className="mini-row" key={s.id}>
@@ -47,15 +48,11 @@ export function PlayerCard({ c, p, selected, onSelect, onOpen }: Props) {
         ))}
       </div>
 
-      <footer>
-        <span>
-          AP {p.ap.cur}/{p.ap.max}
-        </span>
-        <span>
-          Mana {p.mana.cur}/{p.mana.max}
-        </span>
-        {p.spendableXp > 0 && <span className="gold">{p.spendableXp} XP to spend</span>}
-      </footer>
+      {p.spendableXp > 0 && (
+        <footer>
+          <span className="gold">{p.spendableXp} XP to spend</span>
+        </footer>
+      )}
     </article>
   );
 }

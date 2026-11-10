@@ -64,6 +64,22 @@ describe('modifiers', () => {
     c = reduce(c, { type: 'toggleCombat' });
     expect(multiplier(c, c.players[0], { type: 'stat', id: 'grit' })).toBe(4.5);
   });
+
+  it('favorite stat can only be a primary stat', () => {
+    let c = sample();
+    const pid = c.players[0].id;
+    const before = c;
+    c = reduce(c, { type: 'setFavorite', playerId: pid, statId: 'fire' }); // fire is secondary
+    expect(c).toBe(before);
+    c = reduce(c, { type: 'setFavorite', playerId: pid, statId: 'force' });
+    expect(c.players[0].favoriteStatId).toBe('force');
+  });
+
+  it('ignores a non-primary favorite left over in old saved data', () => {
+    const c = sample();
+    c.players[0].favoriteStatId = 'fire';
+    expect(multiplier(c, c.players[0], { type: 'stat', id: 'fire' })).toBe(1);
+  });
 });
 
 describe('award', () => {

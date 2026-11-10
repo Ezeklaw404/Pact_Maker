@@ -52,6 +52,7 @@ export interface Player {
   abilities: Record<string, number>;
   favoriteStatId: string | null;
   misc: { on: boolean; mult: number };
+  hp: Pool;
   ap: Pool;
   mana: Pool;
   /** Generic xp the player can spend on secondary stats, skills, techniques. */

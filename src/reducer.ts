@@ -6,11 +6,12 @@ export type Action =
   | { type: 'award'; playerIds: string[]; targets: Target[]; base: number }
   | { type: 'setXp'; playerId: string; target: Target; xp: number }
   | { type: 'grantSpendable'; playerIds: string[]; amount: number }
+  | { type: 'rest'; playerIds: string[]; hpPct: number; manaPct: number; ap: number }
   | { type: 'spend'; playerId: string; target: Target; amount: number }
   | { type: 'toggleCombat' }
   | { type: 'setFavorite'; playerId: string; statId: string | null }
   | { type: 'setMisc'; playerId: string; on?: boolean; mult?: number }
-  | { type: 'setPool'; playerId: string; pool: 'ap' | 'mana'; cur?: number; max?: number }
+  | { type: 'setPool'; playerId: string; pool: 'hp' | 'ap' | 'mana'; cur?: number; max?: number }
   | { type: 'addPlayer'; name: string; gmOnly?: boolean }
   | { type: 'removePlayer'; playerId: string }
   | { type: 'renamePlayer'; playerId: string; name: string }
@@ -90,6 +91,18 @@ export function reduce(prev: Campaign, action: Action): Campaign {
           if (gain === 0) continue;
           addToTarget(c, p, t, gain);
           parts.push(`${targetName(c, t)} +${gain}`);
+          // A technique also trains every stat it requires.
+          if (t.type === 'ability') {
+            const def = c.abilities.find((a) => a.id === t.id);
+            for (const statId of Object.keys(def?.requires ?? {})) {
+              if (!c.stats.some((x) => x.id === statId)) continue;
+              const st: Target = { type: 'stat', id: statId };
+              const g = round4(action.base * multiplier(c, p, st));
+              if (g === 0) continue;
+              addToTarget(c, p, st, g);
+              parts.push(`${targetName(c, st)} +${g}`);
+            }
+          }
         }
         if (parts.length) {
           log(c, `${p.name}: ${parts.join(', ')}`);
@@ -155,6 +168,7 @@ export function reduce(prev: Campaign, action: Action): Campaign {
     case 'setFavorite': {
       const p = findPlayer(c, action.playerId);
       if (!p) return prev;
+      if (action.statId !== null && c.stats.find((s) => s.id === action.statId)?.kind !== 'primary') return prev;
       p.favoriteStatId = action.statId;
       log(
         c,
@@ -179,7 +193,27 @@ export function reduce(prev: Campaign, action: Action): Campaign {
       if (action.max !== undefined) pool.max = Math.max(0, Math.round(action.max));
       if (action.cur !== undefined) pool.cur = Math.round(action.cur);
       pool.cur = Math.max(0, Math.min(pool.cur, pool.max));
-      log(c, `${p.name}: ${action.pool === 'ap' ? 'AP' : 'Mana'} ${pool.cur}/${pool.max}`);
+      log(
+        c,
+        `${p.name}:   ${action.pool === 'hp' ? 'HP' : action.pool === 'ap' ? 'AP' : 'Mana'} ${pool.cur}/${pool.max}`,
+      );
+      return c;
+    }
+
+    case 'rest': {
+      const names: string[] = [];
+      for (const pid of action.playerIds) {
+        const p = findPlayer(c, pid);
+        if (!p) continue;
+        const gain = (pool: { cur: number; max: number }, pct: number) =>
+          (pool.cur = Math.min(pool.max, pool.cur + Math.ceil((pool.max * Math.max(0, pct)) / 100)));
+        gain(p.hp, action.hpPct);
+        gain(p.mana, action.manaPct);
+        p.ap.cur = Math.min(p.ap.max, p.ap.cur + Math.max(0, Math.round(action.ap)));
+        names.push(p.name);
+      }
+      if (!names.length) return prev;
+      log(c, `Rest (${action.hpPct}% HP, ${action.manaPct}% mana, +${action.ap} AP): ${names.join(', ')}`);
       return c;
     }
 

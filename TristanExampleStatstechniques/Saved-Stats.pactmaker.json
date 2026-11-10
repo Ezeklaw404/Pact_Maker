@@ -1,0 +1,2857 @@
+{
+  "app": "pact-maker",
+  "version": 1,
+  "campaign": {
+    "id": "mw8ncy9ekcww3x",
+    "name": "Saved Stats",
+    "rules": {
+      "baseXp": 10,
+      "growth": 2,
+      "techniqueCap": 5,
+      "dice": "3d6"
+    },
+    "combat": false,
+    "stats": [
+      {
+        "id": "force",
+        "name": "Strength",
+        "kind": "primary"
+      },
+      {
+        "id": "skill",
+        "name": "Dexterity",
+        "kind": "primary"
+      },
+      {
+        "id": "alacrity",
+        "name": "Constitution",
+        "kind": "primary"
+      },
+      {
+        "id": "poise",
+        "name": "Intelligence",
+        "kind": "primary"
+      },
+      {
+        "id": "toughness",
+        "name": "Wisdom",
+        "kind": "primary"
+      },
+      {
+        "id": "grit",
+        "name": "Charisma",
+        "kind": "primary"
+      },
+      {
+        "id": "area",
+        "name": "Force",
+        "kind": "secondary",
+        "parentId": "force"
+      },
+      {
+        "id": "fire",
+        "name": "Steadfast",
+        "kind": "secondary",
+        "parentId": "force"
+      },
+      {
+        "id": "water",
+        "name": "Skill",
+        "kind": "secondary",
+        "parentId": "skill"
+      },
+      {
+        "id": "earth",
+        "name": "Poise",
+        "kind": "secondary",
+        "parentId": "skill"
+      },
+      {
+        "id": "air",
+        "name": "Toughness",
+        "kind": "secondary",
+        "parentId": "alacrity"
+      },
+      {
+        "id": "light",
+        "name": "Stamina",
+        "kind": "secondary",
+        "parentId": "alacrity"
+      },
+      {
+        "id": "dark",
+        "name": "Knowledge",
+        "kind": "secondary",
+        "parentId": "poise"
+      },
+      {
+        "id": "force-2",
+        "name": "Wit",
+        "kind": "secondary",
+        "parentId": "poise"
+      },
+      {
+        "id": "poise-2",
+        "name": "Awareness",
+        "kind": "secondary",
+        "parentId": "toughness"
+      },
+      {
+        "id": "toughness-2",
+        "name": "Focus",
+        "kind": "secondary",
+        "parentId": "toughness"
+      },
+      {
+        "id": "knowledge",
+        "name": "Will",
+        "kind": "secondary",
+        "parentId": "grit"
+      },
+      {
+        "id": "wit",
+        "name": "Grit",
+        "kind": "secondary",
+        "parentId": "grit"
+      }
+    ],
+    "races": [
+      {
+        "id": "human",
+        "name": "Human",
+        "notes": "Increase all skill growth by 20%"
+      },
+      {
+        "id": "elf",
+        "name": "Elf",
+        "notes": "Quadruples mana pool. 20% increase in Will and Skill"
+      },
+      {
+        "id": "dwarf",
+        "name": "Dwarf",
+        "notes": "Reduces all damage taken by half and doubles all toughness exp. Increases exp of Favored stat by 20%"
+      }
+    ],
+    "abilities": [
+      {
+        "id": "fireball",
+        "name": "Fireball",
+        "kind": "technique",
+        "statId": "force",
+        "requires": {
+          "knowledge": 4,
+          "force": 2,
+          "fire": 1
+        },
+        "unlock": "auto",
+        "apCost": 6,
+        "manaCost": 10,
+        "notes": "A massive blast of fire scorching everything in the area: Takes 2 rounds to cast, does 20 damage to everything in a 20 ft radius "
+      },
+      {
+        "id": "swordsmanship",
+        "name": "Strike",
+        "kind": "technique",
+        "statId": "skill",
+        "requires": {
+          "force": 1,
+          "skill": 1
+        },
+        "unlock": "auto",
+        "apCost": 2,
+        "manaCost": 0,
+        "notes": "A basic strike with the sword. Dmg = 1d6 +force"
+      },
+      {
+        "name": "Area",
+        "kind": "skill",
+        "statId": "grit",
+        "unlock": "dm",
+        "requires": {},
+        "apCost": 0,
+        "manaCost": 0,
+        "notes": "",
+        "id": "area"
+      },
+      {
+        "name": "Double Strike",
+        "kind": "technique",
+        "statId": "skill",
+        "unlock": "auto",
+        "requires": {
+          "force": 1,
+          "skill": 3
+        },
+        "apCost": 3,
+        "manaCost": 0,
+        "notes": "Two swift strikes - dmg = 1d6 + force, across 2 rolls",
+        "id": "double-strike"
+      },
+      {
+        "name": "Power swing",
+        "kind": "technique",
+        "statId": "force",
+        "unlock": "auto",
+        "requires": {
+          "force": 1,
+          "skill": 1
+        },
+        "apCost": 5,
+        "manaCost": 0,
+        "notes": "Puts everything into a powerful swing: Dmg = (2d6 + force*2)",
+        "id": "power-swing"
+      },
+      {
+        "name": "Cleave",
+        "kind": "technique",
+        "statId": "force",
+        "unlock": "auto",
+        "requires": {
+          "force": 3,
+          "skill": 1
+        },
+        "apCost": 3,
+        "manaCost": 0,
+        "notes": "A powerful, sweeping stroke that may hit two opponents at once: Dmg = (1d6+Force*2) to two adjacent targets",
+        "id": "cleave"
+      }
+    ],
+    "players": [
+      {
+        "id": "mw4bd9dwumkpde",
+        "name": "Player 1",
+        "raceId": "elf",
+        "stats": {
+          "earth": 9,
+          "water": 11,
+          "air": 10,
+          "force": 260,
+          "fire": 31.5,
+          "area": 34,
+          "skill": 12,
+          "light": 3
+        },
+        "abilities": {
+          "fireball": 6,
+          "swordsmanship": 3
+        },
+        "favoriteStatId": "alacrity",
+        "misc": {
+          "on": false,
+          "mult": 1.5
+        },
+        "ap": {
+          "cur": 6,
+          "max": 6
+        },
+        "mana": {
+          "cur": 50,
+          "max": 100
+        },
+        "spendableXp": 0,
+        "hp": {
+          "cur": 8,
+          "max": 10
+        }
+      },
+      {
+        "id": "mw4bd9dw1kzrlw",
+        "name": "Player 2",
+        "raceId": null,
+        "stats": {
+          "area": 0,
+          "fire": 0,
+          "force": 0,
+          "water": 0,
+          "skill": 0,
+          "earth": 0,
+          "alacrity": 0,
+          "air": 0,
+          "wit": 0,
+          "knowledge": 0,
+          "grit": 0
+        },
+        "abilities": {
+          "swordsmanship": 116
+        },
+        "favoriteStatId": null,
+        "misc": {
+          "on": false,
+          "mult": 1.5
+        },
+        "ap": {
+          "cur": 6,
+          "max": 6
+        },
+        "mana": {
+          "cur": 0,
+          "max": 0
+        },
+        "spendableXp": 20,
+        "hp": {
+          "cur": 10,
+          "max": 10
+        }
+      },
+      {
+        "id": "mw4bd9dwh3re94",
+        "name": "Player 3",
+        "raceId": null,
+        "stats": {
+          "force": 12,
+          "skill": 12
+        },
+        "abilities": {},
+        "favoriteStatId": null,
+        "misc": {
+          "on": false,
+          "mult": 1.5
+        },
+        "ap": {
+          "cur": 6,
+          "max": 6
+        },
+        "mana": {
+          "cur": 0,
+          "max": 0
+        },
+        "spendableXp": 10,
+        "hp": {
+          "cur": 10,
+          "max": 10
+        }
+      },
+      {
+        "id": "mw8nv499a65647",
+        "name": "goblin",
+        "raceId": null,
+        "stats": {},
+        "abilities": {},
+        "favoriteStatId": "skill",
+        "misc": {
+          "on": false,
+          "mult": 1.5
+        },
+        "hp": {
+          "cur": 10,
+          "max": 10
+        },
+        "ap": {
+          "cur": 6,
+          "max": 6
+        },
+        "mana": {
+          "cur": 10,
+          "max": 10
+        },
+        "spendableXp": 0,
+        "gmOnly": true
+      }
+    ],
+    "log": [
+      {
+        "id": "mw4czlcfpjre64",
+        "ts": 1793932325583,
+        "text": "Combat ended"
+      },
+      {
+        "id": "mw4czlmzjecs9c",
+        "ts": 1793932325963,
+        "text": "Combat started (3x XP for everyone)"
+      },
+      {
+        "id": "mw4czm1p0itc1l",
+        "ts": 1793932326493,
+        "text": "Combat ended"
+      },
+      {
+        "id": "mw4czmajyhznwy",
+        "ts": 1793932326811,
+        "text": "Combat started (3x XP for everyone)"
+      },
+      {
+        "id": "mw4czmsxb2g9vx",
+        "ts": 1793932327473,
+        "text": "Combat ended"
+      },
+      {
+        "id": "mw4czn63z58ota",
+        "ts": 1793932327947,
+        "text": "Combat started (3x XP for everyone)"
+      },
+      {
+        "id": "mw4cznlhz2v2lp",
+        "ts": 1793932328501,
+        "text": "Combat ended"
+      },
+      {
+        "id": "mw4cznun52kont",
+        "ts": 1793932328831,
+        "text": "Combat started (3x XP for everyone)"
+      },
+      {
+        "id": "mw4czo6hk6tj6g",
+        "ts": 1793932329257,
+        "text": "Combat ended"
+      },
+      {
+        "id": "mw4czoevst2sxn",
+        "ts": 1793932329559,
+        "text": "Combat started (3x XP for everyone)"
+      },
+      {
+        "id": "mw4czopx4o2zx0",
+        "ts": 1793932329957,
+        "text": "Combat ended"
+      },
+      {
+        "id": "mw4czoyzphkfx0",
+        "ts": 1793932330283,
+        "text": "Combat started (3x XP for everyone)"
+      },
+      {
+        "id": "mw4czp9hs80puv",
+        "ts": 1793932330661,
+        "text": "Combat ended"
+      },
+      {
+        "id": "mw4czptju3mb84",
+        "ts": 1793932331383,
+        "text": "Combat started (3x XP for everyone)"
+      },
+      {
+        "id": "mw4czq6tnan19t",
+        "ts": 1793932331861,
+        "text": "Combat ended"
+      },
+      {
+        "id": "mw4czqir2vjijv",
+        "ts": 1793932332291,
+        "text": "Combat started (3x XP for everyone)"
+      },
+      {
+        "id": "mw4czr83e17l3m",
+        "ts": 1793932333203,
+        "text": "Combat ended"
+      },
+      {
+        "id": "mw4czrjn7czn8p",
+        "ts": 1793932333619,
+        "text": "Combat started (3x XP for everyone)"
+      },
+      {
+        "id": "mw4czrqtk36egr",
+        "ts": 1793932333877,
+        "text": "Combat ended"
+      },
+      {
+        "id": "mw4czsllbtbv5d",
+        "ts": 1793932334985,
+        "text": "Player 1: misc boost off"
+      },
+      {
+        "id": "mw4czsyz4o84id",
+        "ts": 1793932335467,
+        "text": "Player 1: misc boost on (1.5x)"
+      },
+      {
+        "id": "mw4czt7t59rlpw",
+        "ts": 1793932335785,
+        "text": "Player 1: misc boost off"
+      },
+      {
+        "id": "mw4czuvxp6u2jg",
+        "ts": 1793932337949,
+        "text": "Player 1: misc boost on (1.5x)"
+      },
+      {
+        "id": "mw4czv4znyi9so",
+        "ts": 1793932338275,
+        "text": "Player 1: misc boost off"
+      },
+      {
+        "id": "mw4d1zx8fkgo1h",
+        "ts": 1793932437788,
+        "text": "Player 1 spent 5 XP on Water"
+      },
+      {
+        "id": "mw4d2098v69wjr",
+        "ts": 1793932438220,
+        "text": "Player 1 spent 5 XP on Water"
+      },
+      {
+        "id": "mw4d4gu9zs8eo5",
+        "ts": 1793932553025,
+        "text": "Player 1: favorite stat Earth"
+      },
+      {
+        "id": "mw4d4v38rlhn3r",
+        "ts": 1793932571492,
+        "text": "Player 1: favorite stat Force"
+      },
+      {
+        "id": "mw4d4y0mcqvhrg",
+        "ts": 1793932575286,
+        "text": "Player 1: favorite stat Constitution"
+      },
+      {
+        "id": "mw8j3oildmxbx9",
+        "ts": 1794184458717,
+        "text": "Edited stat: Strength"
+      },
+      {
+        "id": "mw8j4g8e21bezz",
+        "ts": 1794184494638,
+        "text": "New secondary stat: Force"
+      },
+      {
+        "id": "mw8j5hnoz73slq",
+        "ts": 1794184543140,
+        "text": "New secondary stat: Poise"
+      },
+      {
+        "id": "mw8j67mmtmijq9",
+        "ts": 1794184576798,
+        "text": "New secondary stat: Toughness"
+      },
+      {
+        "id": "mw8j75ffqihdf3",
+        "ts": 1794184620603,
+        "text": "New secondary stat: Knowledge"
+      },
+      {
+        "id": "mw8j7payir3xpb",
+        "ts": 1794184646362,
+        "text": "New secondary stat: Wit"
+      },
+      {
+        "id": "mw8j7vdzhukzrg",
+        "ts": 1794184654247,
+        "text": "New secondary stat: Grit"
+      },
+      {
+        "id": "mw8j85qtxz2pac",
+        "ts": 1794184667669,
+        "text": "Edited stat: Intelligence"
+      },
+      {
+        "id": "mw8j8aj37v7hnb",
+        "ts": 1794184673871,
+        "text": "Edited stat: Wisdom"
+      },
+      {
+        "id": "mw8j8fvf10gc3k",
+        "ts": 1794184680795,
+        "text": "Edited stat: Charisma"
+      },
+      {
+        "id": "mw8jcucpopnyb5",
+        "ts": 1794184886185,
+        "text": "Edited stat: Awareness"
+      },
+      {
+        "id": "mw8jf015yfvihe",
+        "ts": 1794184986857,
+        "text": "New skill: Area"
+      },
+      {
+        "id": "mw8jfduo9ail3v",
+        "ts": 1794185004768,
+        "text": "Edited stat: Force"
+      },
+      {
+        "id": "mw8jg27z25fhx9",
+        "ts": 1794185036351,
+        "text": "Edited stat: Skill"
+      },
+      {
+        "id": "mw8jgfycschwwf",
+        "ts": 1794185054148,
+        "text": "Edited stat: Dex 2"
+      },
+      {
+        "id": "mw8jk10o5e4efi",
+        "ts": 1794185221416,
+        "text": "Edited stat: Poise"
+      },
+      {
+        "id": "mw8jkmz1dtcjx9",
+        "ts": 1794185249869,
+        "text": "Edited stat: Toughness"
+      },
+      {
+        "id": "mw8jlht4q4wh8y",
+        "ts": 1794185289832,
+        "text": "Edited stat: Stamina"
+      },
+      {
+        "id": "mw8jml9fgdulw0",
+        "ts": 1794185340963,
+        "text": "Edited stat: Knowledge"
+      },
+      {
+        "id": "mw8jn1i0pvt37n",
+        "ts": 1794185362008,
+        "text": "Edited stat: Int2"
+      },
+      {
+        "id": "mw8jnhgw5wdrih",
+        "ts": 1794185382704,
+        "text": "Edited stat: Awareness"
+      },
+      {
+        "id": "mw8jnlvfp4rq7z",
+        "ts": 1794185388411,
+        "text": "Edited stat: STR2"
+      },
+      {
+        "id": "mw8jo6332nb1en",
+        "ts": 1794185414607,
+        "text": "Edited stat: WIS2"
+      },
+      {
+        "id": "mw8jobarcdimoz",
+        "ts": 1794185421363,
+        "text": "Edited stat: INT2"
+      },
+      {
+        "id": "mw8jot98se4tim",
+        "ts": 1794185444636,
+        "text": "Edited stat: Will"
+      },
+      {
+        "id": "mw8jp0sft1ewzu",
+        "ts": 1794185454399,
+        "text": "Edited stat: Wit"
+      },
+      {
+        "id": "mw8jp7zk7e7a7k",
+        "ts": 1794185463728,
+        "text": "Edited stat: Grit"
+      },
+      {
+        "id": "mw8jpn8z4vtfr4",
+        "ts": 1794185483507,
+        "text": "Deleted stat: Grit"
+      },
+      {
+        "id": "mw8jpxhcgfqv7r",
+        "ts": 1794185496768,
+        "text": "Deleted stat: Stamina"
+      },
+      {
+        "id": "mw8jqn0yxm1ue2",
+        "ts": 1794185529874,
+        "text": "Edited stat: STR2"
+      },
+      {
+        "id": "mw8jqziz2t9kzc",
+        "ts": 1794185546075,
+        "text": "Edited stat: INT2"
+      },
+      {
+        "id": "mw8jr5vze059w0",
+        "ts": 1794185554319,
+        "text": "Edited stat: Wit"
+      },
+      {
+        "id": "mw8jrh04bhzc7n",
+        "ts": 1794185568724,
+        "text": "Edited stat: Will"
+      },
+      {
+        "id": "mw8jt0jt5w18zt",
+        "ts": 1794185640713,
+        "text": "Edited stat: Steadfast"
+      },
+      {
+        "id": "mw8jtn4cfdsil5",
+        "ts": 1794185669964,
+        "text": "Edited stat: INT2"
+      },
+      {
+        "id": "mw8kogdg2abf2h",
+        "ts": 1794187107556,
+        "text": "New race: Dwarf"
+      },
+      {
+        "id": "mw8kox3hw648f5",
+        "ts": 1794187129229,
+        "text": "Edited race: Dwarf"
+      },
+      {
+        "id": "mw8kpj71j1m6h2",
+        "ts": 1794187157869,
+        "text": "Edited race: Human"
+      },
+      {
+        "id": "mw8ksyrcptu8mg",
+        "ts": 1794187318008,
+        "text": "Edited race: Dwarf"
+      },
+      {
+        "id": "mw8ku8r6cgfv67",
+        "ts": 1794187377618,
+        "text": "Edited race: Elf"
+      },
+      {
+        "id": "mw8kub3vpk7acl",
+        "ts": 1794187380667,
+        "text": "Edited race: Dwarf"
+      },
+      {
+        "id": "mw8kudqki4571d",
+        "ts": 1794187384076,
+        "text": "Edited race: Elf"
+      },
+      {
+        "id": "mw8kug1s5uzeyf",
+        "ts": 1794187387072,
+        "text": "Edited race: Human"
+      },
+      {
+        "id": "mw8kuj36hweo3z",
+        "ts": 1794187391010,
+        "text": "Edited race: Elf"
+      },
+      {
+        "id": "mw8kuoi6kkgdm0",
+        "ts": 1794187398030,
+        "text": "Edited race: Dwarf"
+      },
+      {
+        "id": "mw8l5bb32yiels",
+        "ts": 1794187894143,
+        "text": "Edited technique: Fireball"
+      },
+      {
+        "id": "mw8l7z09zdg9ig",
+        "ts": 1794188018169,
+        "text": "Edited skill: Strike"
+      },
+      {
+        "id": "mw8l9sxdxnc4k9",
+        "ts": 1794188103601,
+        "text": "Edited skill: Strike"
+      },
+      {
+        "id": "mw8lc2vkmn6is9",
+        "ts": 1794188209808,
+        "text": "Edited skill: Strike"
+      },
+      {
+        "id": "mw8lcovtj56oxf",
+        "ts": 1794188238329,
+        "text": "Edited technique: Strike"
+      },
+      {
+        "id": "mw8ldcwmd7z5wj",
+        "ts": 1794188269462,
+        "text": "New technique: Double Strike"
+      },
+      {
+        "id": "mw8lff7kbi5q7k",
+        "ts": 1794188365760,
+        "text": "Edited technique: Double Strike"
+      },
+      {
+        "id": "mw8lgymkf5wxvh",
+        "ts": 1794188437580,
+        "text": "New technique: Power swing"
+      },
+      {
+        "id": "mw8lj0i1txnj7r",
+        "ts": 1794188533321,
+        "text": "Edited technique: Power swing"
+      },
+      {
+        "id": "mw8llqil0eutvj",
+        "ts": 1794188660349,
+        "text": "Edited technique: Fireball"
+      },
+      {
+        "id": "mw8lmvlmpd7w89",
+        "ts": 1794188713594,
+        "text": "New technique: Cleave"
+      },
+      {
+        "id": "mw8lp5xhaocyg1",
+        "ts": 1794188820293,
+        "text": "Edited technique: Cleave"
+      },
+      {
+        "id": "mw8lq46oq9lwm0",
+        "ts": 1794188864688,
+        "text": "Edited technique: Fireball"
+      },
+      {
+        "id": "mw8lrnweb5o6hd",
+        "ts": 1794188936894,
+        "text": "Rest (25% HP, 25% mana, +3 AP): Player 1, Player 2, Player 3"
+      },
+      {
+        "id": "mw8makap76voe1",
+        "ts": 1794189818689,
+        "text": "Edited stat: Wit"
+      },
+      {
+        "id": "mw8maxrll1p4s2",
+        "ts": 1794189836145,
+        "text": "Edited stat: Focus"
+      },
+      {
+        "id": "mw8mbgzq32besk",
+        "ts": 1794189861062,
+        "text": "Edited stat: Awareness"
+      },
+      {
+        "id": "mw8miaa8hcs1g6",
+        "ts": 1794190178960,
+        "text": "Player 2: Force +1"
+      },
+      {
+        "id": "mw8mkfvna4b7qf",
+        "ts": 1794190279523,
+        "text": "Edited technique: Double Strike"
+      },
+      {
+        "id": "mw8mko1iwuc60z",
+        "ts": 1794190290102,
+        "text": "Edited technique: Double Strike"
+      },
+      {
+        "id": "mw8mkvclv3ixcy",
+        "ts": 1794190299573,
+        "text": "Edited technique: Power swing"
+      },
+      {
+        "id": "mw8mldemqwql1e",
+        "ts": 1794190322974,
+        "text": "Edited technique: Strike"
+      },
+      {
+        "id": "mw8mnm67z9ma2i",
+        "ts": 1794190427647,
+        "text": "Edited technique: Cleave"
+      },
+      {
+        "id": "mw8mo7ocyt4cuv",
+        "ts": 1794190455516,
+        "text": "Edited technique: Double Strike"
+      },
+      {
+        "id": "mw8momvioxsaw8",
+        "ts": 1794190475214,
+        "text": "Edited technique: Double Strike"
+      },
+      {
+        "id": "mw8morgeqmv2a5",
+        "ts": 1794190481150,
+        "text": "Player 2: Force +1"
+      },
+      {
+        "id": "mw8morlhswus80",
+        "ts": 1794190481333,
+        "text": "Player 2: Force +1"
+      },
+      {
+        "id": "mw8morz72suhtu",
+        "ts": 1794190481827,
+        "text": "Player 2: Steadfast +1"
+      },
+      {
+        "id": "mw8mos3vz3qbbm",
+        "ts": 1794190481995,
+        "text": "Player 2: Steadfast +1"
+      },
+      {
+        "id": "mw8mos9dfns3d7",
+        "ts": 1794190482193,
+        "text": "Player 2: Steadfast +1"
+      },
+      {
+        "id": "mw8mot7277od67",
+        "ts": 1794190483406,
+        "text": "Player 2: Force +1"
+      },
+      {
+        "id": "mw8motcp0ur96b",
+        "ts": 1794190483609,
+        "text": "Player 2: Force +1"
+      },
+      {
+        "id": "mw8moutkd057mb",
+        "ts": 1794190485512,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mouzns4ys8o",
+        "ts": 1794190485731,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mov7db86n2q",
+        "ts": 1794190486009,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8movdanv88ty",
+        "ts": 1794190486222,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mp4sdx8f3hl",
+        "ts": 1794190498429,
+        "text": "Player 2: Skill +1"
+      },
+      {
+        "id": "mw8mrpd09ufzg6",
+        "ts": 1794190618404,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mrph59ded5i",
+        "ts": 1794190618553,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mrplihnfryh",
+        "ts": 1794190618710,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mrpp79flha2",
+        "ts": 1794190618843,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mrpsplxofsu",
+        "ts": 1794190618969,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mrpwx6xf6yq",
+        "ts": 1794190619121,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mrq1ihsq0j6",
+        "ts": 1794190619286,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mrqmiwjl7gw",
+        "ts": 1794190620042,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mrqqx40o5y2",
+        "ts": 1794190620201,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mrqux0g7e5s",
+        "ts": 1794190620345,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mrqyna3rjpk",
+        "ts": 1794190620479,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mrr2fybt8v6",
+        "ts": 1794190620615,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mrr63v1kgxa",
+        "ts": 1794190620747,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mrrafk1bxbs",
+        "ts": 1794190620903,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mrrdx0y5mjw",
+        "ts": 1794190621029,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mrrgtd23vlf",
+        "ts": 1794190621133,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mrrl5nttv6e",
+        "ts": 1794190621290,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mrrpaqltoz7",
+        "ts": 1794190621438,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mrrt3mb39ku",
+        "ts": 1794190621575,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mrrx3l6ftch",
+        "ts": 1794190621719,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mrs1724t0dy",
+        "ts": 1794190621867,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mrs5fx4bubq",
+        "ts": 1794190622019,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mrs99u5wgbo",
+        "ts": 1794190622157,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mrsddacux1h",
+        "ts": 1794190622305,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mrsjdsi0z8u",
+        "ts": 1794190622521,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mrsoj9dvp5p",
+        "ts": 1794190622707,
+        "text": "Player 2: Strength +1"
+      },
+      {
+        "id": "mw8mrwdnlxuhxh",
+        "ts": 1794190627499,
+        "text": "Player 2: Dexterity +1"
+      },
+      {
+        "id": "mw8mrwi35yzswg",
+        "ts": 1794190627659,
+        "text": "Player 2: Dexterity +1"
+      },
+      {
+        "id": "mw8mrwm1cg9zyz",
+        "ts": 1794190627801,
+        "text": "Player 2: Dexterity +1"
+      },
+      {
+        "id": "mw8mrwq5xbir6w",
+        "ts": 1794190627949,
+        "text": "Player 2: Dexterity +1"
+      },
+      {
+        "id": "mw8mrwudy18iyn",
+        "ts": 1794190628101,
+        "text": "Player 2: Dexterity +1"
+      },
+      {
+        "id": "mw8mrwylqousvr",
+        "ts": 1794190628253,
+        "text": "Player 2: Dexterity +1"
+      },
+      {
+        "id": "mw8mrx2vo23p5k",
+        "ts": 1794190628407,
+        "text": "Player 2: Dexterity +1"
+      },
+      {
+        "id": "mw8mrx6jt3cl5k",
+        "ts": 1794190628539,
+        "text": "Player 2: Dexterity +1"
+      },
+      {
+        "id": "mw8mrxb3yw3pkz",
+        "ts": 1794190628703,
+        "text": "Player 2: Dexterity +1"
+      },
+      {
+        "id": "mw8mrxf3f6mfj6",
+        "ts": 1794190628847,
+        "text": "Player 2: Dexterity +1"
+      },
+      {
+        "id": "mw8mrxj17u3l37",
+        "ts": 1794190628989,
+        "text": "Player 2: Dexterity +1"
+      },
+      {
+        "id": "mw8ms0jv79aztd",
+        "ts": 1794190632907,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8ms0xfknszrc",
+        "ts": 1794190633395,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8ms12b3qe7c4",
+        "ts": 1794190633571,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8ms16tvvn32s",
+        "ts": 1794190633733,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8ms1bpmxk41s",
+        "ts": 1794190633909,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8ms1h1qov7yn",
+        "ts": 1794190634101,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8ms1lj999pca",
+        "ts": 1794190634263,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8ms1qrdfgtjv",
+        "ts": 1794190634451,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8ms1vjx6pjrr",
+        "ts": 1794190634623,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8ms27ly5zzla",
+        "ts": 1794190635057,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8ms8s1m09044",
+        "ts": 1794190643569,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8ms8y1fwnk9c",
+        "ts": 1794190643785,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8ms92pyb8u2s",
+        "ts": 1794190643953,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8ms97v64z8tt",
+        "ts": 1794190644139,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8ms9crxglpr1",
+        "ts": 1794190644315,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8ms9hjrw026n",
+        "ts": 1794190644487,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8ms9m9qm6dee",
+        "ts": 1794190644657,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8ms9qxtflleh",
+        "ts": 1794190644825,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8ms9vdi0xy7l",
+        "ts": 1794190644985,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8ms9zrwm20l2",
+        "ts": 1794190645143,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msa4n9ov8t9",
+        "ts": 1794190645319,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msa9bywyzgu",
+        "ts": 1794190645487,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msadwvqm9fs",
+        "ts": 1794190645652,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msaiw4n9kgn",
+        "ts": 1794190645832,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msao9whzkvp",
+        "ts": 1794190646025,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msaszm17ges",
+        "ts": 1794190646195,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msaxjsbdaru",
+        "ts": 1794190646359,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msb1nplngo0",
+        "ts": 1794190646507,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msb6dhtgi7t",
+        "ts": 1794190646677,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msbb1sbs1tz",
+        "ts": 1794190646845,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msbfxusgdaq",
+        "ts": 1794190647021,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msbrrh1hcmv",
+        "ts": 1794190647447,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msbxrbinj0s",
+        "ts": 1794190647663,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msc2pyqb3fj",
+        "ts": 1794190647841,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msc85z716x7",
+        "ts": 1794190648037,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mscd1bi7oby",
+        "ts": 1794190648213,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mschztzg6zr",
+        "ts": 1794190648391,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mscn7pff72c",
+        "ts": 1794190648579,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mscsj5swi5b",
+        "ts": 1794190648771,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mscxh2vtda9",
+        "ts": 1794190648949,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msd2143obde",
+        "ts": 1794190649113,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msd6xp87u9c",
+        "ts": 1794190649289,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msdajjm35ka",
+        "ts": 1794190649419,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msdefxyefz3",
+        "ts": 1794190649559,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msdi3ivll9y",
+        "ts": 1794190649691,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msdm3blcqnz",
+        "ts": 1794190649835,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msdq1ur4qyw",
+        "ts": 1794190649977,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msdtt2ubp12",
+        "ts": 1794190650113,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msdyht1ihxj",
+        "ts": 1794190650281,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mse1zpt8hdy",
+        "ts": 1794190650407,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mse5vvowalg",
+        "ts": 1794190650547,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mse9v27uqj2",
+        "ts": 1794190650691,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msedquaxqjr",
+        "ts": 1794190650830,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msehxvwmd8q",
+        "ts": 1794190650981,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msem1gjofa3",
+        "ts": 1794190651129,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mseplcqamqw",
+        "ts": 1794190651257,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mseuh1p4gnh",
+        "ts": 1794190651433,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msexn7yh2ag",
+        "ts": 1794190651547,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msf1y7y2eru",
+        "ts": 1794190651702,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msf6bca8ox5",
+        "ts": 1794190651859,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msfa7ctsxf3",
+        "ts": 1794190651999,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msfe5w50cbz",
+        "ts": 1794190652141,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msfi91b1wlx",
+        "ts": 1794190652289,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msfmlhogwzd",
+        "ts": 1794190652445,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msfprv2nh0x",
+        "ts": 1794190652559,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msftu3kpuji",
+        "ts": 1794190652706,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msg1m6b68yj",
+        "ts": 1794190652986,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msg698032u3",
+        "ts": 1794190653153,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msienprozsu",
+        "ts": 1794190656047,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msiqpatd7m2",
+        "ts": 1794190656481,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msiveqe4iii",
+        "ts": 1794190656650,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mssf6lkqrkh",
+        "ts": 1794190669026,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mssjep1izv3",
+        "ts": 1794190669178,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mssmy8m02wz",
+        "ts": 1794190669306,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mssqsrh3ule",
+        "ts": 1794190669444,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mssuobklzly",
+        "ts": 1794190669584,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mssyo681ncs",
+        "ts": 1794190669728,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mst1liwoqxb",
+        "ts": 1794190669833,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mst5kz7i2kl",
+        "ts": 1794190669976,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mst9fcgwmwa",
+        "ts": 1794190670115,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mstde5v7hwi",
+        "ts": 1794190670258,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msti6qtet2n",
+        "ts": 1794190670430,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mstpcrca9he",
+        "ts": 1794190670688,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mstscrekfjs",
+        "ts": 1794190670796,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mstz8wophrq",
+        "ts": 1794190671044,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msu46qyobz8",
+        "ts": 1794190671222,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msu8i8emekq",
+        "ts": 1794190671378,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msud61w3cyl",
+        "ts": 1794190671546,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msuh4x8bpf4",
+        "ts": 1794190671688,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msuk83afe10",
+        "ts": 1794190671800,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msuokzs9twk",
+        "ts": 1794190671956,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msutsky75df",
+        "ts": 1794190672144,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8msx90us4d5x",
+        "ts": 1794190675284,
+        "text": "Player 2: Force +1"
+      },
+      {
+        "id": "mw8msxdeyxdirc",
+        "ts": 1794190675442,
+        "text": "Player 2: Force +1"
+      },
+      {
+        "id": "mw8msxhsoy2ds3",
+        "ts": 1794190675600,
+        "text": "Player 2: Force +1"
+      },
+      {
+        "id": "mw8msxmiljzm61",
+        "ts": 1794190675770,
+        "text": "Player 2: Force +1"
+      },
+      {
+        "id": "mw8msxr6xutp7q",
+        "ts": 1794190675938,
+        "text": "Player 2: Force +1"
+      },
+      {
+        "id": "mw8mt04qswstvx",
+        "ts": 1794190679018,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mt09aravrgq",
+        "ts": 1794190679182,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mt0dsicn003",
+        "ts": 1794190679344,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mt0i0jzubrx",
+        "ts": 1794190679496,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mt0m4i2wz7n",
+        "ts": 1794190679644,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mt0qceiwcin",
+        "ts": 1794190679796,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mt0tyor2n2q",
+        "ts": 1794190679926,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mt0xy8rcw0i",
+        "ts": 1794190680070,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mt11uarqill",
+        "ts": 1794190680210,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mt166fgkzpg",
+        "ts": 1794190680366,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mt1aorse0vs",
+        "ts": 1794190680528,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mt1ewhxmxbc",
+        "ts": 1794190680680,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mt1ikyzbivq",
+        "ts": 1794190680812,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mt1n2mnmppw",
+        "ts": 1794190680974,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mt1qyed9ftq",
+        "ts": 1794190681114,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mt1uqp02qet",
+        "ts": 1794190681250,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mt1yqjp6j8d",
+        "ts": 1794190681394,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mt23onrkcvu",
+        "ts": 1794190681572,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mu73xn9bukg",
+        "ts": 1794190734717,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mu78k6zrdv2",
+        "ts": 1794190734884,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mu7cgh9ctrc",
+        "ts": 1794190735024,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mu7h4uzgf8z",
+        "ts": 1794190735192,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mu7lensrij0",
+        "ts": 1794190735346,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8mu7q2fkrf95",
+        "ts": 1794190735514,
+        "text": "Player 2: Strike +1"
+      },
+      {
+        "id": "mw8muraog6j53q",
+        "ts": 1794190760880,
+        "text": "Player 2: Steadfast +1"
+      },
+      {
+        "id": "mw8murfew5x31n",
+        "ts": 1794190761050,
+        "text": "Player 2: Steadfast +1"
+      },
+      {
+        "id": "mw8murju25sq6k",
+        "ts": 1794190761210,
+        "text": "Player 2: Steadfast +1"
+      },
+      {
+        "id": "mw8muroqb1vrc7",
+        "ts": 1794190761386,
+        "text": "Player 2: Steadfast +1"
+      },
+      {
+        "id": "mw8muru4orhyck",
+        "ts": 1794190761580,
+        "text": "Player 2: Steadfast +1"
+      },
+      {
+        "id": "mw8mus0s0e6deu",
+        "ts": 1794190761820,
+        "text": "Player 2: Steadfast +1"
+      },
+      {
+        "id": "mw8mus6ef6owec",
+        "ts": 1794190762022,
+        "text": "Player 2: Steadfast +1"
+      },
+      {
+        "id": "mw8muscmwlgxt7",
+        "ts": 1794190762246,
+        "text": "Player 2: Steadfast +1"
+      },
+      {
+        "id": "mw8musp0812j7b",
+        "ts": 1794190762692,
+        "text": "Player 2: Steadfast +1"
+      },
+      {
+        "id": "mw8musx0wo8olb",
+        "ts": 1794190762980,
+        "text": "Player 2: Steadfast +1"
+      },
+      {
+        "id": "mw8mut3rp7ymt1",
+        "ts": 1794190763223,
+        "text": "Player 2: Steadfast +1"
+      },
+      {
+        "id": "mw8muxmatvfunz",
+        "ts": 1794190769074,
+        "text": "Combat started (3x XP for everyone)"
+      },
+      {
+        "id": "mw8muyyksiky4r",
+        "ts": 1794190770812,
+        "text": "Player 2: Force +3"
+      },
+      {
+        "id": "mw8muzcqagnj2q",
+        "ts": 1794190771322,
+        "text": "Player 2: Force +3"
+      },
+      {
+        "id": "mw8mv0rlfqt0xk",
+        "ts": 1794190773153,
+        "text": "Player 2: Poise +3"
+      },
+      {
+        "id": "mw8mv148dif9b0",
+        "ts": 1794190773608,
+        "text": "Player 2: Poise +3"
+      },
+      {
+        "id": "mw8mv1entoqjz2",
+        "ts": 1794190773983,
+        "text": "Player 2: Poise +3"
+      },
+      {
+        "id": "mw8mv22uk74xxo",
+        "ts": 1794190774854,
+        "text": "Player 2: Poise +3"
+      },
+      {
+        "id": "mw8mv2cb1tltx8",
+        "ts": 1794190775195,
+        "text": "Player 2: Poise +3"
+      },
+      {
+        "id": "mw8mv2i87szi27",
+        "ts": 1794190775408,
+        "text": "Player 2: Poise +3"
+      },
+      {
+        "id": "mw8mv2nflhsehd",
+        "ts": 1794190775595,
+        "text": "Player 2: Poise +3"
+      },
+      {
+        "id": "mw8mv2si5u1s9g",
+        "ts": 1794190775778,
+        "text": "Player 2: Poise +3"
+      },
+      {
+        "id": "mw8mv2xp2s8v5r",
+        "ts": 1794190775965,
+        "text": "Player 2: Poise +3"
+      },
+      {
+        "id": "mw8mv32tyavhrq",
+        "ts": 1794190776149,
+        "text": "Player 2: Poise +3"
+      },
+      {
+        "id": "mw8mv37r7cjgbd",
+        "ts": 1794190776327,
+        "text": "Player 2: Poise +3"
+      },
+      {
+        "id": "mw8mv3ejqddb7z",
+        "ts": 1794190776571,
+        "text": "Player 2: Poise +3"
+      },
+      {
+        "id": "mw8mv3lhx06uja",
+        "ts": 1794190776821,
+        "text": "Player 2: Poise +3"
+      },
+      {
+        "id": "mw8mv3qyjikqek",
+        "ts": 1794190777018,
+        "text": "Player 2: Poise +3"
+      },
+      {
+        "id": "mw8mv3v5uqxt6k",
+        "ts": 1794190777169,
+        "text": "Player 2: Poise +3"
+      },
+      {
+        "id": "mw8mv477yiabna",
+        "ts": 1794190777603,
+        "text": "Player 2: Constitution +3"
+      },
+      {
+        "id": "mw8mv4brkdn5ik",
+        "ts": 1794190777767,
+        "text": "Player 2: Constitution +3"
+      },
+      {
+        "id": "mw8mv4gxjjzrou",
+        "ts": 1794190777953,
+        "text": "Player 2: Constitution +3"
+      },
+      {
+        "id": "mw8mv4l9ze7oar",
+        "ts": 1794190778109,
+        "text": "Player 2: Constitution +3"
+      },
+      {
+        "id": "mw8mv4q5irdujo",
+        "ts": 1794190778285,
+        "text": "Player 2: Constitution +3"
+      },
+      {
+        "id": "mw8mv4v7ep8mfs",
+        "ts": 1794190778467,
+        "text": "Player 2: Constitution +3"
+      },
+      {
+        "id": "mw8mv50v540ujc",
+        "ts": 1794190778671,
+        "text": "Player 2: Toughness +3"
+      },
+      {
+        "id": "mw8mv561bwvf37",
+        "ts": 1794190778857,
+        "text": "Player 2: Toughness +3"
+      },
+      {
+        "id": "mw8mv5b5v8tinm",
+        "ts": 1794190779041,
+        "text": "Player 2: Toughness +3"
+      },
+      {
+        "id": "mw8mv5fl4hgk6y",
+        "ts": 1794190779201,
+        "text": "Player 2: Toughness +3"
+      },
+      {
+        "id": "mw8mv5l77wnem1",
+        "ts": 1794190779403,
+        "text": "Player 2: Toughness +3"
+      },
+      {
+        "id": "mw8mv6y9zvqpbj",
+        "ts": 1794190781169,
+        "text": "Player 2: Grit +3"
+      },
+      {
+        "id": "mw8mv73ez09mbp",
+        "ts": 1794190781354,
+        "text": "Player 2: Grit +3"
+      },
+      {
+        "id": "mw8mv78bto4a1o",
+        "ts": 1794190781531,
+        "text": "Player 2: Grit +3"
+      },
+      {
+        "id": "mw8mv7enclw26l",
+        "ts": 1794190781759,
+        "text": "Player 2: Grit +3"
+      },
+      {
+        "id": "mw8mv7jz1x3pux",
+        "ts": 1794190781951,
+        "text": "Player 2: Grit +3"
+      },
+      {
+        "id": "mw8mv7rx7dhv6v",
+        "ts": 1794190782237,
+        "text": "Player 2: Will +3"
+      },
+      {
+        "id": "mw8mv7x9pu49f7",
+        "ts": 1794190782429,
+        "text": "Player 2: Will +3"
+      },
+      {
+        "id": "mw8mv830gpsgl3",
+        "ts": 1794190782636,
+        "text": "Player 2: Will +3"
+      },
+      {
+        "id": "mw8mv87zdmo176",
+        "ts": 1794190782815,
+        "text": "Player 2: Will +3"
+      },
+      {
+        "id": "mw8mv8db0k336c",
+        "ts": 1794190783007,
+        "text": "Player 2: Will +3"
+      },
+      {
+        "id": "mw8mv8lbc7y3ge",
+        "ts": 1794190783295,
+        "text": "Player 2: Charisma +3"
+      },
+      {
+        "id": "mw8mv8qdg2exnn",
+        "ts": 1794190783477,
+        "text": "Player 2: Charisma +3"
+      },
+      {
+        "id": "mw8mv8wfrq7959",
+        "ts": 1794190783695,
+        "text": "Player 2: Charisma +3"
+      },
+      {
+        "id": "mw8mv91z66qyba",
+        "ts": 1794190783895,
+        "text": "Player 2: Charisma +3"
+      },
+      {
+        "id": "mw8mvaovx6y2ce",
+        "ts": 1794190786015,
+        "text": "Player 2: Strength +3"
+      },
+      {
+        "id": "mw8mvatr14w10t",
+        "ts": 1794190786191,
+        "text": "Player 2: Strength +3"
+      },
+      {
+        "id": "mw8mvazjlj7srm",
+        "ts": 1794190786399,
+        "text": "Player 2: Strength +3"
+      },
+      {
+        "id": "mw8mvb4hz7if6y",
+        "ts": 1794190786577,
+        "text": "Player 2: Strength +3"
+      },
+      {
+        "id": "mw8mvb9p56yg8m",
+        "ts": 1794190786765,
+        "text": "Player 2: Strength +3"
+      },
+      {
+        "id": "mw8mvbev9noo8s",
+        "ts": 1794190786951,
+        "text": "Player 2: Strength +3"
+      },
+      {
+        "id": "mw8mvbkjd4z7on",
+        "ts": 1794190787155,
+        "text": "Player 2: Strength +3"
+      },
+      {
+        "id": "mw8mvbpnjrn5g7",
+        "ts": 1794190787339,
+        "text": "Player 2: Strength +3"
+      },
+      {
+        "id": "mw8mvbvqsbox43",
+        "ts": 1794190787558,
+        "text": "Player 2: Strength +3"
+      },
+      {
+        "id": "mw8mvd57skt413",
+        "ts": 1794190789195,
+        "text": "Player 2:   AP 5/6"
+      },
+      {
+        "id": "mw8mvd9zyvq056",
+        "ts": 1794190789367,
+        "text": "Player 2:   AP 4/6"
+      },
+      {
+        "id": "mw8mvdexr9kddb",
+        "ts": 1794190789545,
+        "text": "Player 2:   AP 3/6"
+      },
+      {
+        "id": "mw8mvdjh4tak67",
+        "ts": 1794190789709,
+        "text": "Player 2:   AP 2/6"
+      },
+      {
+        "id": "mw8mvdo98trs1t",
+        "ts": 1794190789881,
+        "text": "Player 2:   AP 1/6"
+      },
+      {
+        "id": "mw8mvdtj6mugj3",
+        "ts": 1794190790071,
+        "text": "Player 2:   AP 0/6"
+      },
+      {
+        "id": "mw8mvec15s0p5q",
+        "ts": 1794190790737,
+        "text": "Player 2:   AP 1/6"
+      },
+      {
+        "id": "mw8mvefxgib9gh",
+        "ts": 1794190790877,
+        "text": "Player 2:   AP 2/6"
+      },
+      {
+        "id": "mw8mvejtvwh56p",
+        "ts": 1794190791017,
+        "text": "Player 2:   AP 3/6"
+      },
+      {
+        "id": "mw8mveozcf4q1n",
+        "ts": 1794190791203,
+        "text": "Player 2:   AP 4/6"
+      },
+      {
+        "id": "mw8mvesv1ilelc",
+        "ts": 1794190791343,
+        "text": "Player 2:   AP 5/6"
+      },
+      {
+        "id": "mw8mveyf690gn0",
+        "ts": 1794190791543,
+        "text": "Player 2:   AP 6/6"
+      },
+      {
+        "id": "mw8mvfbp35e1jt",
+        "ts": 1794190792021,
+        "text": "Player 2:   AP 5/6"
+      },
+      {
+        "id": "mw8mvffpt848fm",
+        "ts": 1794190792165,
+        "text": "Player 2:   AP 4/6"
+      },
+      {
+        "id": "mw8mvfk3k6ld0k",
+        "ts": 1794190792323,
+        "text": "Player 2:   AP 3/6"
+      },
+      {
+        "id": "mw8mvfontga6vp",
+        "ts": 1794190792487,
+        "text": "Player 2:   AP 2/6"
+      },
+      {
+        "id": "mw8mvftrynsrr5",
+        "ts": 1794190792671,
+        "text": "Player 2:   AP 1/6"
+      },
+      {
+        "id": "mw8mvfytpoc5o5",
+        "ts": 1794190792853,
+        "text": "Player 2:   AP 0/6"
+      },
+      {
+        "id": "mw8mvgqth05utw",
+        "ts": 1794190793861,
+        "text": "Player 2:   AP 1/6"
+      },
+      {
+        "id": "mw8mvgw14n8vzi",
+        "ts": 1794190794049,
+        "text": "Player 2:   AP 2/6"
+      },
+      {
+        "id": "mw8mvh0xqc6b5j",
+        "ts": 1794190794225,
+        "text": "Player 2:   AP 3/6"
+      },
+      {
+        "id": "mw8mvh5jn3ws5b",
+        "ts": 1794190794391,
+        "text": "Player 2:   AP 4/6"
+      },
+      {
+        "id": "mw8mvharo8cotb",
+        "ts": 1794190794579,
+        "text": "Player 2:   AP 5/6"
+      },
+      {
+        "id": "mw8mvhdzlxov5k",
+        "ts": 1794190794695,
+        "text": "Player 2:   AP 6/6"
+      },
+      {
+        "id": "mw8mvi0blf7lzd",
+        "ts": 1794190795499,
+        "text": "Player 2:   AP 5/6"
+      },
+      {
+        "id": "mw8mvi5f0l19ij",
+        "ts": 1794190795683,
+        "text": "Player 2:   AP 4/6"
+      },
+      {
+        "id": "mw8mviafds0fji",
+        "ts": 1794190795863,
+        "text": "Player 2:   AP 3/6"
+      },
+      {
+        "id": "mw8mvifdeahc7z",
+        "ts": 1794190796041,
+        "text": "Player 2:   AP 2/6"
+      },
+      {
+        "id": "mw8mvikdddya20",
+        "ts": 1794190796221,
+        "text": "Player 2:   AP 1/6"
+      },
+      {
+        "id": "mw8mvioxpmvw1j",
+        "ts": 1794190796385,
+        "text": "Player 2:   AP 0/6"
+      },
+      {
+        "id": "mw8mvj4bmx89ah",
+        "ts": 1794190796939,
+        "text": "Player 2:   AP 1/6"
+      },
+      {
+        "id": "mw8mvj8v6m9s05",
+        "ts": 1794190797103,
+        "text": "Player 2:   AP 2/6"
+      },
+      {
+        "id": "mw8mvjdj2p0cjf",
+        "ts": 1794190797271,
+        "text": "Player 2:   AP 3/6"
+      },
+      {
+        "id": "mw8mvjhld3dzuo",
+        "ts": 1794190797417,
+        "text": "Player 2:   AP 4/6"
+      },
+      {
+        "id": "mw8mvjml1aao0e",
+        "ts": 1794190797597,
+        "text": "Player 2:   AP 5/6"
+      },
+      {
+        "id": "mw8mvjqtkgse6m",
+        "ts": 1794190797749,
+        "text": "Player 2:   AP 6/6"
+      },
+      {
+        "id": "mw8mvjwf4ydzwx",
+        "ts": 1794190797951,
+        "text": "Player 2:   AP 6/6"
+      },
+      {
+        "id": "mw8mvkd929fsrb",
+        "ts": 1794190798557,
+        "text": "Player 2:   AP 5/6"
+      },
+      {
+        "id": "mw8mvkih8tehj5",
+        "ts": 1794190798745,
+        "text": "Player 2:   AP 4/6"
+      },
+      {
+        "id": "mw8mvknp36h7qy",
+        "ts": 1794190798933,
+        "text": "Player 2:   AP 3/6"
+      },
+      {
+        "id": "mw8mvksvdf7t3m",
+        "ts": 1794190799119,
+        "text": "Player 2:   AP 2/6"
+      },
+      {
+        "id": "mw8mvkxzb4mrsy",
+        "ts": 1794190799303,
+        "text": "Player 2:   AP 1/6"
+      },
+      {
+        "id": "mw8mvl3bdf36tw",
+        "ts": 1794190799495,
+        "text": "Player 2:   AP 0/6"
+      },
+      {
+        "id": "mw8mvlpbpfuso7",
+        "ts": 1794190800287,
+        "text": "Player 2:   AP 1/6"
+      },
+      {
+        "id": "mw8mvlunq5yddv",
+        "ts": 1794190800479,
+        "text": "Player 2:   AP 2/6"
+      },
+      {
+        "id": "mw8mvlz5aku49l",
+        "ts": 1794190800641,
+        "text": "Player 2:   AP 3/6"
+      },
+      {
+        "id": "mw8mvm4di2cukm",
+        "ts": 1794190800829,
+        "text": "Player 2:   AP 4/6"
+      },
+      {
+        "id": "mw8mvm9l76x92q",
+        "ts": 1794190801017,
+        "text": "Player 2:   AP 5/6"
+      },
+      {
+        "id": "mw8mvnej9083ml",
+        "ts": 1794190802491,
+        "text": "Player 2:   AP 6/6"
+      },
+      {
+        "id": "mw8mvp4q3zr1gc",
+        "ts": 1794190804730,
+        "text": "Player 2:   AP 5/6"
+      },
+      {
+        "id": "mw8mvpa5omsdtw",
+        "ts": 1794190804925,
+        "text": "Player 2:   AP 4/6"
+      },
+      {
+        "id": "mw8mvpf56t32ba",
+        "ts": 1794190805105,
+        "text": "Player 2:   AP 3/6"
+      },
+      {
+        "id": "mw8mvpk5bnm1l6",
+        "ts": 1794190805285,
+        "text": "Player 2:   AP 2/6"
+      },
+      {
+        "id": "mw8mvppb5tcbq7",
+        "ts": 1794190805471,
+        "text": "Player 2:   AP 1/6"
+      },
+      {
+        "id": "mw8mvptmld1dko",
+        "ts": 1794190805626,
+        "text": "Player 2:   AP 0/6"
+      },
+      {
+        "id": "mw8mvqaxbss9o8",
+        "ts": 1794190806249,
+        "text": "Player 2:   AP 1/6"
+      },
+      {
+        "id": "mw8mvqfy20j3o8",
+        "ts": 1794190806430,
+        "text": "Player 2:   AP 2/6"
+      },
+      {
+        "id": "mw8mvqljvd1znq",
+        "ts": 1794190806631,
+        "text": "Player 2:   AP 3/6"
+      },
+      {
+        "id": "mw8mvqqjjrkiig",
+        "ts": 1794190806811,
+        "text": "Player 2:   AP 4/6"
+      },
+      {
+        "id": "mw8mvqvcu23ak0",
+        "ts": 1794190806984,
+        "text": "Player 2:   AP 5/6"
+      },
+      {
+        "id": "mw8mvr0hzufqyo",
+        "ts": 1794190807169,
+        "text": "Player 2:   AP 6/6"
+      },
+      {
+        "id": "mw8mvrgan0o95b",
+        "ts": 1794190807738,
+        "text": "Player 2:   AP 5/6"
+      },
+      {
+        "id": "mw8mvrl778e7nu",
+        "ts": 1794190807915,
+        "text": "Player 2:   AP 4/6"
+      },
+      {
+        "id": "mw8mvrqkenz8bm",
+        "ts": 1794190808108,
+        "text": "Player 2:   AP 3/6"
+      },
+      {
+        "id": "mw8mxbivt120qe",
+        "ts": 1794190880407,
+        "text": "Player 2:   AP 1/6"
+      },
+      {
+        "id": "mw8mxbsx48looe",
+        "ts": 1794190880769,
+        "text": "Player 2:   AP 2/6"
+      },
+      {
+        "id": "mw8mxc4i6ypwai",
+        "ts": 1794190881186,
+        "text": "Player 2:   AP 1/6"
+      },
+      {
+        "id": "mw8mxcdf0l3ap0",
+        "ts": 1794190881507,
+        "text": "Player 2:   AP 0/6"
+      },
+      {
+        "id": "mw8mxcmpp2vz56",
+        "ts": 1794190881841,
+        "text": "Player 2:   AP 2/6"
+      },
+      {
+        "id": "mw8mxdc9bzkrl6",
+        "ts": 1794190882761,
+        "text": "Player 2:   AP 5/6"
+      },
+      {
+        "id": "mw8mxe36jq634p",
+        "ts": 1794190883730,
+        "text": "Player 2:   AP 6/6"
+      },
+      {
+        "id": "mw8mxey2r2vylv",
+        "ts": 1794190884842,
+        "text": "Player 2:   AP 4/6"
+      },
+      {
+        "id": "mw8mxfo0fgyawb",
+        "ts": 1794190885776,
+        "text": "Player 2:   AP 3/6"
+      },
+      {
+        "id": "mw8mz82j9f2i3r",
+        "ts": 1794190969243,
+        "text": "Player 2: misc boost off"
+      },
+      {
+        "id": "mw8mz9yipj4hqk",
+        "ts": 1794190971690,
+        "text": "Player 2:   AP 2/6"
+      },
+      {
+        "id": "mw8mzaj8efwu1r",
+        "ts": 1794190972436,
+        "text": "Player 2:   AP 1/6"
+      },
+      {
+        "id": "mw8mzb68xqynx2",
+        "ts": 1794190973264,
+        "text": "Player 2:   AP 3/6"
+      },
+      {
+        "id": "mw8mzq3cuw7oui",
+        "ts": 1794190992600,
+        "text": "Player 2:   AP 2/6"
+      },
+      {
+        "id": "mw8mzqhyus8crk",
+        "ts": 1794190993126,
+        "text": "Player 2:   AP 1/6"
+      },
+      {
+        "id": "mw8mzqqo4c3kmt",
+        "ts": 1794190993440,
+        "text": "Player 2:   AP 3/6"
+      },
+      {
+        "id": "mw8mzz5pnp16nu",
+        "ts": 1794191004349,
+        "text": "Player 2:   AP 4/6"
+      },
+      {
+        "id": "mw8mzzh5xgtrsh",
+        "ts": 1794191004761,
+        "text": "Player 2:   AP 5/6"
+      },
+      {
+        "id": "mw8n002jqwnvsl",
+        "ts": 1794191005531,
+        "text": "Player 2:   AP 6/6"
+      },
+      {
+        "id": "mw8n0btaarks5a",
+        "ts": 1794191020750,
+        "text": "Player 2: Will +3"
+      },
+      {
+        "id": "mw8n0byju8m3vh",
+        "ts": 1794191020939,
+        "text": "Player 2: Will +3"
+      },
+      {
+        "id": "mw8n0c3b4ol322",
+        "ts": 1794191021111,
+        "text": "Player 2: Will +3"
+      },
+      {
+        "id": "mw8n0c890guj0w",
+        "ts": 1794191021289,
+        "text": "Player 2: Will +3"
+      },
+      {
+        "id": "mw8n0cctoqtltm",
+        "ts": 1794191021453,
+        "text": "Player 2: Will +3"
+      },
+      {
+        "id": "mw8n0ch0wkge18",
+        "ts": 1794191021604,
+        "text": "Player 2: Will +3"
+      },
+      {
+        "id": "mw8n0clqhoaw21",
+        "ts": 1794191021774,
+        "text": "Player 2: Will +3"
+      },
+      {
+        "id": "mw8n0cqz8e6crh",
+        "ts": 1794191021963,
+        "text": "Player 2: Will +3"
+      },
+      {
+        "id": "mw8n0cvupb28nr",
+        "ts": 1794191022138,
+        "text": "Player 2: Will +3"
+      },
+      {
+        "id": "mw8n0d0oeys3cx",
+        "ts": 1794191022312,
+        "text": "Player 2: Will +3"
+      },
+      {
+        "id": "mw8n0d50dcu3j4",
+        "ts": 1794191022468,
+        "text": "Player 2: Will +3"
+      },
+      {
+        "id": "mw8n0d9p58d56l",
+        "ts": 1794191022637,
+        "text": "Player 2: Will +3"
+      },
+      {
+        "id": "mw8n0de7mjimv5",
+        "ts": 1794191022799,
+        "text": "Player 2: Will +3"
+      },
+      {
+        "id": "mw8n0dirkd2i0k",
+        "ts": 1794191022963,
+        "text": "Player 2: Will +3"
+      },
+      {
+        "id": "mw8n0dnijuqt8u",
+        "ts": 1794191023134,
+        "text": "Player 2: Will +3"
+      },
+      {
+        "id": "mw8n0dug9v4vpf",
+        "ts": 1794191023384,
+        "text": "Player 2: Will +3"
+      },
+      {
+        "id": "mw8n0dzh2wxblc",
+        "ts": 1794191023565,
+        "text": "Player 2: Will +3"
+      },
+      {
+        "id": "mw8n0fot8yavn8",
+        "ts": 1794191025773,
+        "text": "Player 2: misc boost on (1.5x)"
+      },
+      {
+        "id": "mw8n0hfd1mpd5j",
+        "ts": 1794191028025,
+        "text": "Player 2: Will +4.5"
+      },
+      {
+        "id": "mw8n0hjzh9d6ni",
+        "ts": 1794191028191,
+        "text": "Player 2: Will +4.5"
+      },
+      {
+        "id": "mw8n0hou8urfv9",
+        "ts": 1794191028366,
+        "text": "Player 2: Will +4.5"
+      },
+      {
+        "id": "mw8n0hu29v9ww6",
+        "ts": 1794191028554,
+        "text": "Player 2: Will +4.5"
+      },
+      {
+        "id": "mw8n0hyg0u0jnd",
+        "ts": 1794191028712,
+        "text": "Player 2: Will +4.5"
+      },
+      {
+        "id": "mw8n0i345pcug6",
+        "ts": 1794191028880,
+        "text": "Player 2: Will +4.5"
+      },
+      {
+        "id": "mw8n0i7os5ebbd",
+        "ts": 1794191029044,
+        "text": "Player 2: Will +4.5"
+      },
+      {
+        "id": "mw8n0ibvwb0ly7",
+        "ts": 1794191029195,
+        "text": "Player 2: Will +4.5"
+      },
+      {
+        "id": "mw8n0igelwit6h",
+        "ts": 1794191029358,
+        "text": "Player 2: Will +4.5"
+      },
+      {
+        "id": "mw8n0iku8r664b",
+        "ts": 1794191029518,
+        "text": "Player 2: Will +4.5"
+      },
+      {
+        "id": "mw8n0ip7or5nzt",
+        "ts": 1794191029675,
+        "text": "Player 2: Will +4.5"
+      },
+      {
+        "id": "mw8n0itk4xess9",
+        "ts": 1794191029832,
+        "text": "Player 2: Will +4.5"
+      },
+      {
+        "id": "mw8n0iygwbddlq",
+        "ts": 1794191030008,
+        "text": "Player 2: Will +4.5"
+      },
+      {
+        "id": "mw8n0j3kusmo84",
+        "ts": 1794191030192,
+        "text": "Player 2: Will +4.5"
+      },
+      {
+        "id": "mw8n0j8mhz9s7r",
+        "ts": 1794191030374,
+        "text": "Player 2: Will +4.5"
+      },
+      {
+        "id": "mw8n0jd767x0kp",
+        "ts": 1794191030539,
+        "text": "Player 2: Will +4.5"
+      },
+      {
+        "id": "mw8n0ji6n6y64w",
+        "ts": 1794191030718,
+        "text": "Player 2: Will +4.5"
+      },
+      {
+        "id": "mw8n0joo09pk26",
+        "ts": 1794191030952,
+        "text": "Player 2: Will +4.5"
+      },
+      {
+        "id": "mw8n0jthawqfoo",
+        "ts": 1794191031125,
+        "text": "Player 2: Will +4.5"
+      },
+      {
+        "id": "mw8n0ldpa9ndus",
+        "ts": 1794191033149,
+        "text": "Player 2: Strength +4.5"
+      },
+      {
+        "id": "mw8n0likb25i4y",
+        "ts": 1794191033324,
+        "text": "Player 2: Strength +4.5"
+      },
+      {
+        "id": "mw8n0lo2wq2lbt",
+        "ts": 1794191033522,
+        "text": "Player 2: Strength +4.5"
+      },
+      {
+        "id": "mw8n4mndwmbzd2",
+        "ts": 1794191221417,
+        "text": "Player 2: misc boost off"
+      },
+      {
+        "id": "mw8n4n03m2uz0q",
+        "ts": 1794191221875,
+        "text": "Player 2: misc boost on (1.5x)"
+      },
+      {
+        "id": "mw8n4n8fyh2mqj",
+        "ts": 1794191222175,
+        "text": "Player 2: misc boost off"
+      },
+      {
+        "id": "mw8n4nh9cvpi7z",
+        "ts": 1794191222493,
+        "text": "Player 2: misc boost on (1.5x)"
+      },
+      {
+        "id": "mw8n4nrdzqd6rw",
+        "ts": 1794191222857,
+        "text": "Player 2: misc boost off"
+      },
+      {
+        "id": "mw8n79m0w4737p",
+        "ts": 1794191344488,
+        "text": "Player 2: Strength set to 0.00 (manual edit)"
+      },
+      {
+        "id": "mw8n7b8cu8rjtb",
+        "ts": 1794191346588,
+        "text": "Player 2: Force set to 0.00 (manual edit)"
+      },
+      {
+        "id": "mw8n7c5u0f8dph",
+        "ts": 1794191347794,
+        "text": "Player 2: Steadfast set to 0.00 (manual edit)"
+      },
+      {
+        "id": "mw8n7crjt7e9gk",
+        "ts": 1794191348575,
+        "text": "Player 2: Dexterity set to 0.00 (manual edit)"
+      },
+      {
+        "id": "mw8n7dcuw18i9g",
+        "ts": 1794191349342,
+        "text": "Player 2: Skill set to 0.00 (manual edit)"
+      },
+      {
+        "id": "mw8n7els5noqta",
+        "ts": 1794191350960,
+        "text": "Player 2: Poise set to 0.00 (manual edit)"
+      },
+      {
+        "id": "mw8n7f4mpe37gy",
+        "ts": 1794191351638,
+        "text": "Player 2: Constitution set to 0.00 (manual edit)"
+      },
+      {
+        "id": "mw8n7floxggadm",
+        "ts": 1794191352252,
+        "text": "Player 2: Toughness set to 0.00 (manual edit)"
+      },
+      {
+        "id": "mw8n7h0zqyrnqe",
+        "ts": 1794191354099,
+        "text": "Player 2: Will set to 0.00 (manual edit)"
+      },
+      {
+        "id": "mw8n7hstp1snx5",
+        "ts": 1794191355101,
+        "text": "Player 2: Grit set to 0.00 (manual edit)"
+      },
+      {
+        "id": "mw8n7iwevfouv6",
+        "ts": 1794191356526,
+        "text": "Player 2: Charisma set to 0.00 (manual edit)"
+      },
+      {
+        "id": "mw8nevqzvamp4z",
+        "ts": 1794191699771,
+        "text": "Combat ended"
+      },
+      {
+        "id": "mw8nn1g24nna2k",
+        "ts": 1794192080402,
+        "text": "Player 1:   AP 6/8"
+      },
+      {
+        "id": "mw8nn3ngpgxfmp",
+        "ts": 1794192083260,
+        "text": "Player 1:   AP 6/6"
+      },
+      {
+        "id": "mw8nn7zrys5mk2",
+        "ts": 1794192088887,
+        "text": "Player 1:   HP 9/10"
+      },
+      {
+        "id": "mw8nn8l6fuz7u6",
+        "ts": 1794192089658,
+        "text": "Player 1:   HP 10/10"
+      },
+      {
+        "id": "mw8nn9348w9f5k",
+        "ts": 1794192090304,
+        "text": "Player 1:   HP 9/10"
+      },
+      {
+        "id": "mw8nn97h71dmf2",
+        "ts": 1794192090461,
+        "text": "Player 1:   HP 8/10"
+      },
+      {
+        "id": "mw8nn9bnjfawnw",
+        "ts": 1794192090611,
+        "text": "Player 1:   HP 7/10"
+      },
+      {
+        "id": "mw8nn9g42n5g8d",
+        "ts": 1794192090772,
+        "text": "Player 1:   HP 6/10"
+      },
+      {
+        "id": "mw8nn9kowfezkj",
+        "ts": 1794192090936,
+        "text": "Player 1:   HP 5/10"
+      },
+      {
+        "id": "mw8nnjcf20hgit",
+        "ts": 1794192103599,
+        "text": "Rest (25% HP, 25% mana, +3 AP): Player 1, Player 2, Player 3"
+      },
+      {
+        "id": "mw8nv499biqyeu",
+        "ts": 1794192457293,
+        "text": "goblin added (GM only)"
+      },
+      {
+        "id": "mw8nvkzuuct5vc",
+        "ts": 1794192478986,
+        "text": "goblin: favorite stat Dexterity"
+      },
+      {
+        "id": "mw8nvqpigl3t7q",
+        "ts": 1794192486390,
+        "text": "Combat started (3x XP for everyone)"
+      },
+      {
+        "id": "mw8nvshk57x2ym",
+        "ts": 1794192488696,
+        "text": "Combat ended"
+      },
+      {
+        "id": "mw8nvuhfq3jgjq",
+        "ts": 1794192491283,
+        "text": "Combat started (3x XP for everyone)"
+      },
+      {
+        "id": "mw8nvv32p8hszb",
+        "ts": 1794192492062,
+        "text": "Combat ended"
+      },
+      {
+        "id": "mw8nvzuvyu9q5n",
+        "ts": 1794192498247,
+        "text": "Combat started (3x XP for everyone)"
+      },
+      {
+        "id": "mw8nw4ho3bo786",
+        "ts": 1794192504252,
+        "text": "Combat ended"
+      },
+      {
+        "id": "mw8o5j8seteb39",
+        "ts": 1794192943276,
+        "text": "Combat started (3x XP for everyone)"
+      },
+      {
+        "id": "mw8o5nabtcevll",
+        "ts": 1794192948515,
+        "text": "Player 3: Strength +3"
+      },
+      {
+        "id": "mw8o5nl2raxinc",
+        "ts": 1794192948902,
+        "text": "Player 3: Strength +3"
+      },
+      {
+        "id": "mw8o5nwmf1v3pr",
+        "ts": 1794192949318,
+        "text": "Player 3: Strength +3"
+      },
+      {
+        "id": "mw8o5o9gzm2f09",
+        "ts": 1794192949780,
+        "text": "Player 3: Strength +3"
+      },
+      {
+        "id": "mw8o5pkuai7w01",
+        "ts": 1794192951486,
+        "text": "Player 3: Dexterity +3"
+      },
+      {
+        "id": "mw8o5ptdpshjlz",
+        "ts": 1794192951793,
+        "text": "Player 3: Dexterity +3"
+      },
+      {
+        "id": "mw8o5q4x4j7i3o",
+        "ts": 1794192952209,
+        "text": "Player 3: Dexterity +3"
+      },
+      {
+        "id": "mw8o5qhac6j3tk",
+        "ts": 1794192952654,
+        "text": "Player 3: Dexterity +3"
+      },
+      {
+        "id": "mw8o5wo8rkg1kb",
+        "ts": 1794192960680,
+        "text": "Combat ended"
+      }
+    ],
+    "rulesText": "# House rules\nPrimary stats all add their value to the relevant secondary stats. XP requirement for level equals 3 times a secondary stat, gains xp every time it is used. \n\n# Force\n- Each level increases damage by 1 (modifiers?)\n- Level by exerting force on others\n- extra when you deal 0 dmg\n\n# Steadfast\n- Each level resists being moved\n- Level by having force exerted on you\n\n# Skill\n- Each level increases hit by 1\n\n# Poise\n- Each level increases dodge by 1\n\n# Endurance\n- Reduces damage by -.5\n\n# Stamina\n- Using a stat strains it, lowering it until a rest. That is buffered by this. \n\n# Knowledge\n- Each level increases the tier of knowledge you'd be aware of\n  1 - local knowledge of home\n  2 - Broad knowledge of most areas\n  3 - General knowledge \n  4 - Specific knowledge \n  5 - Intimate knowledge \n- Capital -0, city -1, town -2, village -3, remote -4, forgotten -5\n\n# Wit\n- Essential for forming new techniques from scratch. Like creativity. \n\n# Awareness\n- each level increases perception by 1. Also tied to spiritual/emotional connection\n\n# Focus\n- Mental Fortitude. Using mental stats puts a drain that is buffered by this. \n\n# Will\n- Mana pool, and commanding others\n\n# Grit\n- Each point increases threshold of damage before shock/panic",
+    "createdAt": 1793929604035,
+    "updatedAt": 1794195863288
+  }
+}

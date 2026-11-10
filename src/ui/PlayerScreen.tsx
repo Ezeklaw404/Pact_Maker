@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { rollDice } from '../dice';
-import type { Permission } from '../protocol';
+import type { Permission, PlayerRequest } from '../protocol';
+import { PoolCtl } from './PoolCtl';
 import type { AbilityDef, Player, StatDef, Target } from '../types';
 import type { PlayerView } from '../view';
+import { Vitals } from './Vitals';
 import { abilityCap, formatLevel, isMastered, isUnlocked, multiplier, statLevel, statXp, targetName } from '../xp';
 import { Bar, renderMarkdown } from './parts';
 
@@ -10,8 +12,7 @@ interface Props {
   view: PlayerView;
   permission: Permission;
   notice: string;
-  onAward: (targets: Target[]) => void;
-  /** Only the real player screen has a Leave button; the host's preview does not. */
+  onRequest: (req: PlayerRequest) => void;
   onLeave?: () => void;
 }
 
@@ -26,6 +27,7 @@ interface RowProps {
   sub?: string;
   canAdd: boolean;
   onAdd: () => void;
+  onEdit?: () => void;
   onRoll: () => void;
 }
 
@@ -39,7 +41,13 @@ function Row(r: RowProps) {
             {r.badge && <em className="badge">{r.badge}</em>}
             {r.mult > 1 && <em className="mult">×{r.mult}</em>}
           </span>
-          <b className="level-num">{formatLevel(r.xp, r.view.rules)}</b>
+          {r.onEdit ? (
+            <button className="level" onClick={r.onEdit} title="Click to edit manually">
+              {formatLevel(r.xp, r.view.rules)}
+            </button>
+          ) : (
+            <b className="level-num">{formatLevel(r.xp, r.view.rules)}</b>
+          )}
         </div>
         <Bar xp={r.xp} rules={r.view.rules} full={r.full} />
         {r.sub && <small className="muted">{r.sub}</small>}
@@ -59,7 +67,7 @@ function Row(r: RowProps) {
 }
 
 /** What a player sees: their own sheet in full, everyone else as name + race. */
-export function PlayerScreen({ view, permission, notice, onAward, onLeave }: Props) {
+export function PlayerScreen({ view, permission, notice, onRequest, onLeave }: Props) {
   const [rolled, setRolled] = useState('');
   useEffect(() => {
     if (!rolled) return;
@@ -68,7 +76,15 @@ export function PlayerScreen({ view, permission, notice, onAward, onLeave }: Pro
   }, [rolled]);
 
   const me = view.me;
-  const canAdd = permission === 'xp' && me !== null;
+  const canAdd = permission === 'admin' && me !== null;
+  const canEdit = permission !== 'view' && me !== null;
+  const award = (targets: Target[]) => onRequest({ type: 'award', targets });
+  const pool = (p: 'hp' | 'ap' | 'mana', cur?: number, max?: number) => onRequest({ type: 'pool', pool: p, cur, max });
+  const edit = (t: Target, xp: number) => {
+    const v = window.prompt(`Set ${targetName(view, t)} level (example: 4.05)`, formatLevel(xp, view.rules));
+    const n = v === null ? NaN : parseFloat(v);
+    if (Number.isFinite(n) && n >= 0) onRequest({ type: 'setLevel', target: t, level: n });
+  };
 
   const roll = (p: Player, t: Target) => {
     const statId = t.type === 'stat' ? t.id : view.abilities.find((a) => a.id === t.id)?.statId;
@@ -92,7 +108,8 @@ export function PlayerScreen({ view, permission, notice, onAward, onLeave }: Pro
         mult={multiplier(view, p, t)}
         indent={indent}
         canAdd={canAdd}
-        onAdd={() => onAward([t])}
+        onAdd={() => award([t])}
+        onEdit={canAdd ? () => edit(t, statXp(p, s.id)) : undefined}
         onRoll={() => roll(p, t)}
       />
     );
@@ -117,7 +134,8 @@ export function PlayerScreen({ view, permission, notice, onAward, onLeave }: Pro
           .join(' · ')}
         mult={multiplier(view, p, t)}
         canAdd={canAdd}
-        onAdd={() => onAward([t])}
+        onAdd={() => award([t])}
+        onEdit={canAdd ? () => edit(t, xp) : undefined}
         onRoll={() => roll(p, t)}
       />
     );
@@ -146,15 +164,30 @@ export function PlayerScreen({ view, permission, notice, onAward, onLeave }: Pro
             {race ?? 'No race'}
             {fav ? ` · ★ ${fav}` : ''}
           </small>
-          <div className="pools">
-            <span>
-              AP {p.ap.cur}/{p.ap.max}
-            </span>
-            <span>
-              Mana {p.mana.cur}/{p.mana.max}
-            </span>
-            {p.spendableXp > 0 && <span className="gold">{p.spendableXp} XP to spend</span>}
-          </div>
+          <Vitals p={p} onAp={canEdit ? (cur) => pool('ap', cur) : undefined} />
+          {canEdit && (
+            <>
+              <PoolCtl
+                label="HP"
+                pool={p.hp}
+                canMax={permission === 'admin'}
+                onChange={(cur, max) => pool('hp', cur, max)}
+              />
+              <PoolCtl
+                label="Mana"
+                pool={p.mana}
+                canMax={permission === 'admin'}
+                onChange={(cur, max) => pool('mana', cur, max)}
+              />
+              <PoolCtl
+                label="AP"
+                pool={p.ap}
+                canMax={permission === 'admin'}
+                onChange={(cur, max) => pool('ap', cur, max)}
+              />
+            </>
+          )}
+          {p.spendableXp > 0 && <div className="pools gold">{p.spendableXp} XP to spend</div>}
         </div>
 
         <div className="panel">
@@ -194,7 +227,9 @@ export function PlayerScreen({ view, permission, notice, onAward, onLeave }: Pro
       <header className="topbar">
         <h1>{view.campaignName}</h1>
         <div className="spacer" />
-        <span className="muted">{permission === 'xp' ? 'Can add XP' : 'View only'}</span>
+        <span className="muted">
+          {permission === 'admin' ? 'Admin' : permission === 'edit' ? 'Can edit vitals' : 'View only'}
+        </span>
         {onLeave && <button onClick={onLeave}>Leave</button>}
       </header>
 

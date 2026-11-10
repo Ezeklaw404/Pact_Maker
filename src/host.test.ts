@@ -42,13 +42,13 @@ describe('authorize', () => {
 
   it('denies players with no character', () => {
     const c = make();
-    const s = { ...newSession(c, '1', 'Nobody'), permission: 'xp' as const };
+    const s = { ...newSession(c, '1', 'Nobody'), permission: 'admin' as const };
     expect(authorize(c, s, award('force')).ok).toBe(false);
   });
 
   it('turns an allowed request into +1 XP for their own character only', () => {
     const c = make();
-    const s = { ...newSession(c, '1', 'Player 1'), permission: 'xp' as const };
+    const s = { ...newSession(c, '1', 'Player 1'), permission: 'admin' as const };
     const d = authorize(c, s, award('force'));
     expect(d.ok).toBe(true);
     if (!d.ok) return;
@@ -59,7 +59,7 @@ describe('authorize', () => {
 
   it('drops unknown ids and denies when nothing valid is left', () => {
     const c = make();
-    const s = { ...newSession(c, '1', 'Player 1'), permission: 'xp' as const };
+    const s = { ...newSession(c, '1', 'Player 1'), permission: 'admin' as const };
     expect(authorize(c, s, award('nonsense')).ok).toBe(false);
     const d = authorize(c, s, award('nonsense', 'grit'));
     expect(d.ok && d.action.type === 'award' && d.action.targets.length).toBe(1);

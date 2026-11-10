@@ -1,7 +1,9 @@
 import { useState, type ReactNode } from 'react';
 import { rollDice } from '../dice';
 import type { Action } from '../reducer';
-import type { AbilityDef, Campaign, Player, Pool, StatDef, Target } from '../types';
+import { Vitals } from './Vitals';
+import { PoolCtl } from './PoolCtl';
+import type { AbilityDef, Campaign, Player, StatDef, Target } from '../types';
 import {
   abilityCap,
   formatLevel,
@@ -67,40 +69,6 @@ function Row(r: RowProps) {
         </button>
         {r.extra}
       </div>
-    </div>
-  );
-}
-
-function PoolCtl({
-  label,
-  pool,
-  onChange,
-}: {
-  label: string;
-  pool: Pool;
-  onChange: (cur?: number, max?: number) => void;
-}) {
-  return (
-    <div className="pool">
-      <span>{label}</span>
-      <button onClick={() => onChange(pool.cur - 1)}>−</button>
-      <b>
-        {pool.cur}/{pool.max}
-      </b>
-      <button onClick={() => onChange(pool.cur + 1)}>+</button>
-      <label className="muted">
-        max
-        <input
-          key={pool.max}
-          type="number"
-          min={0}
-          defaultValue={pool.max}
-          onBlur={(e) => {
-            const v = Number(e.target.value);
-            if (Number.isFinite(v) && v !== pool.max) onChange(undefined, v);
-          }}
-        />
-      </label>
     </div>
   );
 }
@@ -259,11 +227,13 @@ export function FocusView({ c, p, dispatch, onBack, onToast }: Props) {
             onChange={(e) => dispatch({ type: 'setFavorite', playerId: p.id, statId: e.target.value || null })}
           >
             <option value="">None</option>
-            {c.stats.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
-            ))}
+            {c.stats
+              .filter((s) => s.kind === 'primary')
+              .map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
           </select>
         </label>
         <label className="inline">
@@ -287,6 +257,12 @@ export function FocusView({ c, p, dispatch, onBack, onToast }: Props) {
 
       <div className="panel">
         <h4>Resources</h4>
+        <Vitals p={p} onAp={(cur) => dispatch({ type: 'setPool', playerId: p.id, pool: 'ap', cur })} />
+        <PoolCtl
+          label="HP"
+          pool={p.hp}
+          onChange={(cur, max) => dispatch({ type: 'setPool', playerId: p.id, pool: 'hp', cur, max })}
+        />
         <PoolCtl
           label="AP"
           pool={p.ap}

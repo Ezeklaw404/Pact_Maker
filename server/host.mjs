@@ -1,14 +1,20 @@
-// Pact Maker host: serves the built app (dist/) and relays WebSocket messages.
-// The relay never reads game data. The host's browser is the authority.
+// Pact Maker host: serves the built app (dist/), relays WebSocket messages,
+// and saves campaigns to the data/ folder. The host's browser is the authority for game data.
 import fs from 'node:fs';
 import http from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { WebSocketServer } from 'ws';
+import { isHostPcRequest } from './access.mjs';
 
 const PORT = Number(process.env.PORT) || 3000;
-const DIST = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'dist');
+const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
+const DIST = path.join(ROOT, 'dist');
+// Saved campaigns live here, one JSON file each. Back this folder up to keep your games safe.
+const DATA = process.env.DATA_DIR || path.join(ROOT, 'data');
+const CAMPAIGNS = path.join(DATA, 'campaigns');
+fs.mkdirSync(CAMPAIGNS, { recursive: true });
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -21,6 +27,87 @@ const MIME = {
   '.ico': 'image/x-icon',
 };
 
+// ---------- saved campaigns (host PC only) ----------
+const ID_OK = /^[A-Za-z0-9_-]{1,64}$/;
+const MAX_BODY = 5 * 1024 * 1024;
+
+function sendJson(res, status, body) {
+  res.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+  res.end(JSON.stringify(body));
+}
+
+function readBody(req) {
+  return new Promise((resolve, reject) => {
+    let size = 0;
+    const chunks = [];
+    req.on('data', (d) => {
+      size += d.length;
+      if (size > MAX_BODY) {
+        reject(new Error('too large'));
+        req.destroy();
+      } else chunks.push(d);
+    });
+    req.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+    req.on('error', reject);
+  });
+}
+
+async function campaignApi(req, res, urlPath) {
+  // Only the host PC may read or change saves. Players never need this.
+  if (!isHostPcRequest(req)) return sendJson(res, 403, { error: 'Host PC only' });
+
+  const m = urlPath.match(/^\/api\/campaigns(?:\/([^/]+))?$/);
+  if (!m) return sendJson(res, 404, { error: 'Not found' });
+  const id = m[1];
+
+  if (!id) {
+    if (req.method !== 'GET') return sendJson(res, 405, { error: 'Method not allowed' });
+    const list = [];
+    for (const f of fs.readdirSync(CAMPAIGNS)) {
+      if (!f.endsWith('.json')) continue;
+      try {
+        const c = JSON.parse(fs.readFileSync(path.join(CAMPAIGNS, f), 'utf8'));
+        list.push({ id: c.id, name: c.name, updatedAt: c.updatedAt });
+      } catch {
+        /* skip unreadable files */
+      }
+    }
+    return sendJson(res, 200, list);
+  }
+
+  if (!ID_OK.test(id)) return sendJson(res, 400, { error: 'Bad id' });
+  const file = path.join(CAMPAIGNS, `${id}.json`);
+
+  if (req.method === 'GET') {
+    if (!fs.existsSync(file)) return sendJson(res, 404, { error: 'No such campaign' });
+    res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+    return fs.createReadStream(file).pipe(res);
+  }
+
+  if (req.method === 'PUT') {
+    let c;
+    try {
+      c = JSON.parse(await readBody(req));
+    } catch {
+      return sendJson(res, 400, { error: 'Bad JSON' });
+    }
+    if (!c || c.id !== id || typeof c.name !== 'string' || !Array.isArray(c.players)) {
+      return sendJson(res, 400, { error: 'Not a campaign' });
+    }
+    const tmp = `${file}.tmp`;
+    fs.writeFileSync(tmp, JSON.stringify(c));
+    fs.renameSync(tmp, file); // swap in whole, so a crash never leaves half a file
+    return sendJson(res, 200, { ok: true });
+  }
+
+  if (req.method === 'DELETE') {
+    fs.rmSync(file, { force: true });
+    return sendJson(res, 200, { ok: true });
+  }
+
+  return sendJson(res, 405, { error: 'Method not allowed' });
+}
+
 // ---------- static files ----------
 const server = http.createServer((req, res) => {
   let urlPath;
@@ -29,6 +116,14 @@ const server = http.createServer((req, res) => {
   } catch {
     res.writeHead(400);
     return res.end();
+  }
+
+  if (urlPath.startsWith('/api/')) {
+    campaignApi(req, res, urlPath).catch(() => {
+      if (!res.headersSent) sendJson(res, 500, { error: 'Server error' });
+      else res.end();
+    });
+    return;
   }
 
   let file = path.join(DIST, urlPath);

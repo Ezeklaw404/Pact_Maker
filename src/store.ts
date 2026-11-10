@@ -3,6 +3,7 @@ import { newCampaign } from './defaults';
 import { commit, createHistory, redo as redoH, undo as undoH, type History } from './history';
 import { importCampaign } from './portable';
 import { reduce, type Action } from './reducer';
+import { migrate } from './migrate';
 import {
   deleteCampaign,
   getLastId,
@@ -31,7 +32,7 @@ export function useStore() {
       const lastId = await getLastId();
       const wanted = idx.find((i) => i.id === lastId) ?? idx[0];
       const loaded = wanted ? await loadCampaign(wanted.id) : undefined;
-      setHist(createHistory(loaded ?? newCampaign('My Campaign')));
+      setHist(createHistory(loaded ? migrate(loaded) : newCampaign('My Campaign')));
       setIndex(idx);
     })();
   }, []);
@@ -57,7 +58,7 @@ export function useStore() {
   /** Switch campaigns; history starts fresh (undo is session-only per campaign). */
   const open = useCallback(async (id: string) => {
     const c = await loadCampaign(id);
-    if (c) setHist(createHistory(c));
+    if (c) setHist(createHistory(migrate(c)));
   }, []);
 
   const create = useCallback((name: string) => {

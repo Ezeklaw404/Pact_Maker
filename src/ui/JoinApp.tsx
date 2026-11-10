@@ -27,7 +27,7 @@ export function JoinApp() {
 
   if (p.status === 'in' && p.view) {
     return (
-      <PlayerScreen view={p.view} permission={p.permission} notice={p.notice} onAward={p.award} onLeave={p.leave} />
+      <PlayerScreen view={p.view} permission={p.permission} notice={p.notice} onRequest={p.request} onLeave={p.leave} />
     );
   }
 

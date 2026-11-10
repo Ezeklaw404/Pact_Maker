@@ -4,9 +4,14 @@ Stat and XP tracker for tabletop RPGs. The DM sees every player at once, clicks 
 
 ## Run it (Windows)
 
-```
+```Local development
 npm install
 npm run dev
+```
+
+```host development
+npm run build
+npm run host
 ```
 
 Open the address it prints (usually http://localhost:5173).

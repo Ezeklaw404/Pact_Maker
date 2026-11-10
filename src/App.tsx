@@ -6,8 +6,9 @@ import { GrantModal } from './ui/GrantModal';
 import { Menu } from './ui/Menu';
 import { PlayerCard } from './ui/PlayerCard';
 import { useHost } from './useHost';
+import { RestModal } from './ui/RestModal';
 
-type Modal = 'action' | 'grant' | null;
+type Modal = 'action' | 'grant' | 'rest' | null;
 
 export function App() {
   const store = useStore();
@@ -79,6 +80,7 @@ export function App() {
           Action
         </button>
         <button onClick={() => setModal('grant')}>Grant XP</button>
+        <button onClick={() => setModal('rest')}>Rest</button>
         <button className="icon" onClick={undo} disabled={!store.canUndo} title="Undo (Ctrl+Z)" aria-label="Undo">
           ↶
         </button>
@@ -155,6 +157,9 @@ export function App() {
       )}
       {modal === 'grant' && (
         <GrantModal c={c} initialPlayers={modalPlayers} dispatch={dispatch} onClose={() => setModal(null)} />
+      )}
+      {modal === 'rest' && (
+        <RestModal c={c} initialPlayers={modalPlayers} dispatch={dispatch} onClose={() => setModal(null)} />
       )}
     </div>
   );

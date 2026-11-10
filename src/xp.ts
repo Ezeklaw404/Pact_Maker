@@ -92,7 +92,7 @@ export function multiplier(c: Pick<Campaign, 'combat' | 'stats' | 'abilities'>, 
   let statId: string | undefined;
   if (target.type === 'stat') statId = target.id;
   else statId = c.abilities.find((a) => a.id === target.id)?.statId;
-  const fav = p.favoriteStatId;
+  const fav = c.stats.find((s) => s.id === p.favoriteStatId && s.kind === 'primary')?.id;
   if (fav && statId) {
     const parent = c.stats.find((s) => s.id === statId)?.parentId;
     if (statId === fav || parent === fav) m *= 2;

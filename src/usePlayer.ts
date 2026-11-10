@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { joinRoom, type JoinConn } from './net';
-import type { Permission, ToHost, ToPlayer } from './protocol';
-import type { Target } from './types';
+import type { Permission, PlayerRequest, ToHost, ToPlayer } from './protocol';
 import type { PlayerView } from './view';
 
 export type PlayerStatus = 'idle' | 'connecting' | 'in';
@@ -47,8 +46,8 @@ export function usePlayer() {
   const leave = useCallback(() => connRef.current?.close(), []);
 
   /** Asks the host to add XP to these targets on my own character. The host decides. */
-  const award = useCallback((targets: Target[]) => {
-    const msg: ToHost = { k: 'req', req: { type: 'award', targets } };
+  const request = useCallback((req: PlayerRequest) => {
+    const msg: ToHost = { k: 'req', req };
     connRef.current?.send(msg);
   }, []);
 
@@ -60,5 +59,5 @@ export function usePlayer() {
 
   useEffect(() => () => connRef.current?.close(), []);
 
-  return { status, view, permission, notice, error, join, leave, award };
+  return { status, view, permission, notice, error, join, leave, request };
 }
