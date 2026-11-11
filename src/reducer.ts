@@ -1,7 +1,16 @@
 import type { AbilityDef, Campaign, Player, StatKind, Target } from './types';
 import { newPlayer } from './defaults';
-import { clampAbilityXp, formatLevel, isUnlocked, multiplier, round4, targetName, uid } from './xp';
-
+import {
+  canSpendOn,
+  clampAbilityXp,
+  formatLevel,
+  isUnlocked,
+  multiplier,
+  round4,
+  spendRoom,
+  targetName,
+  uid,
+} from './xp';
 export type Action =
   | { type: 'award'; playerIds: string[]; targets: Target[]; base: number }
   | { type: 'setXp'; playerId: string; target: Target; xp: number }
@@ -144,18 +153,14 @@ export function reduce(prev: Campaign, action: Action): Campaign {
 
     case 'spend': {
       const p = findPlayer(c, action.playerId);
-      if (!p || action.amount <= 0 || action.amount > p.spendableXp) return prev;
-      const t = action.target;
-      if (t.type === 'stat') {
-        const stat = c.stats.find((s) => s.id === t.id);
-        if (!stat || stat.kind === 'primary') return prev; // primary stats can't be bought
-      } else {
-        const def = c.abilities.find((a) => a.id === t.id);
-        if (!def || !isUnlocked(c, p, def)) return prev;
-      }
-      p.spendableXp = round4(p.spendableXp - action.amount);
-      addToTarget(c, p, t, action.amount);
-      log(c, `${p.name} spent ${action.amount} XP on ${targetName(c, t)}`);
+      if (!p || action.amount <= 0 || action.amount > p.spendableXp || !canSpendOn(c, p, action.target)) return prev;
+      const mult = multiplier(c, p, action.target);
+      const gain = Math.min(round4(action.amount * mult), spendRoom(c, action.target, currentXp(p, action.target)));
+      if (gain <= 0) return prev;
+      const used = round4(gain / mult);
+      p.spendableXp = round4(p.spendableXp - used);
+      addToTarget(c, p, action.target, gain);
+      log(c, `${p.name} spent ${used} XP on ${targetName(c, action.target)} (+${gain})`);
       return c;
     }
 

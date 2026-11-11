@@ -1,28 +1,27 @@
 import type { Pool } from '../types';
 
-/** − / + for the current value, plus an optional box for the maximum. */
-export function PoolCtl({
-  label,
+export function PoolBtns({
   pool,
   onChange,
   canMax = true,
+  steps = true,
 }: {
-  label: string;
   pool: Pool;
   onChange: (cur?: number, max?: number) => void;
   canMax?: boolean;
+  steps?: boolean;
 }) {
   return (
-    <div className="pool">
-      <span>{label}</span>
-      <button onClick={() => onChange(pool.cur - 1)}>−</button>
-      <b>
-        {pool.cur}/{pool.max}
-      </b>
-      <button onClick={() => onChange(pool.cur + 1)}>+</button>
+    <div className="pool-btns">
+      {steps && (
+        <>
+          <button onClick={() => onChange(pool.cur - 1)}>−</button>
+          <button onClick={() => onChange(pool.cur + 1)}>+</button>
+        </>
+      )}
       {canMax && (
-        <label className="muted">
-          max
+        <label className="max-box">
+          <span>max</span>
           <input
             key={pool.max}
             type="number"

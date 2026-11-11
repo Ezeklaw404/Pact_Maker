@@ -1,8 +1,8 @@
 import type { Permission, PlayerRequest, ToPlayer } from './protocol';
 import type { Action } from './reducer';
-import type { Campaign, Target } from './types';
+import type { Campaign, Player, Target } from './types';
 import { viewFor } from './view';
-import { isUnlocked, levelToXp } from './xp';
+import { canSpendOn, isUnlocked, levelToXp, SPEND_AMOUNT } from './xp';
 
 /** One connected player, as the host sees them. */
 export interface Session {
@@ -60,6 +60,10 @@ export function parseRequest(data: unknown): PlayerRequest | null {
     return out.cur === undefined && out.max === undefined ? null : out;
   }
 
+  if (r.type === 'spend') {
+    const target = parseTarget(r.target);
+    return target ? { type: 'spend', target } : null;
+  }
   if (r.type === 'setLevel') {
     const target = parseTarget(r.target);
     const level = num(r.level, 0, 200);
@@ -74,10 +78,17 @@ export type Decision = { ok: true; action: Action } | { ok: false; reason: strin
 export function authorize(c: Campaign, s: Session, req: PlayerRequest): Decision {
   const mine = c.players.find((p) => p.id === s.playerId && !p.gmOnly);
   if (!mine) return { ok: false, reason: 'You are not assigned to a character yet.' };
+  return decide(c, mine, s.permission, req);
+}
 
+export function gmDecide(c: Campaign, mine: Player, req: PlayerRequest): Decision {
+  return decide(c, mine, 'admin', req);
+}
+
+function decide(c: Campaign, mine: Player, permission: Permission, req: PlayerRequest): Decision {
   switch (req.type) {
     case 'award': {
-      if (s.permission !== 'admin')
+      if (permission !== 'admin')
         return { ok: false, reason: 'The host has not made you an admin, so you cannot add XP.' };
       const valid = req.targets.filter((t) =>
         t.type === 'stat' ? c.stats.some((x) => x.id === t.id) : c.abilities.some((a) => a.id === t.id),
@@ -87,14 +98,21 @@ export function authorize(c: Campaign, s: Session, req: PlayerRequest): Decision
     }
 
     case 'pool': {
-      if (s.permission === 'view') return { ok: false, reason: 'You have view-only access.' };
-      if (req.max !== undefined && s.permission !== 'admin')
+      if (permission === 'view') return { ok: false, reason: 'You have view-only access.' };
+      if (req.max !== undefined && permission !== 'admin')
         return { ok: false, reason: 'Only admins can change maximums.' };
       return { ok: true, action: { type: 'setPool', playerId: mine.id, pool: req.pool, cur: req.cur, max: req.max } };
     }
 
+    case 'spend': {
+      if (permission === 'view') return { ok: false, reason: 'You have view-only access.' };
+      if (!canSpendOn(c, mine, req.target) || mine.spendableXp < SPEND_AMOUNT) {
+        return { ok: false, reason: 'You cannot spend points there.' };
+      }
+      return { ok: true, action: { type: 'spend', playerId: mine.id, target: req.target, amount: SPEND_AMOUNT } };
+    }
     case 'setLevel': {
-      if (s.permission !== 'admin') return { ok: false, reason: 'Only admins can edit XP.' };
+      if (permission !== 'admin') return { ok: false, reason: 'Only admins can edit XP.' };
       const t = req.target;
       if (t.type === 'stat') {
         if (!c.stats.some((x) => x.id === t.id)) return { ok: false, reason: 'Unknown stat.' };

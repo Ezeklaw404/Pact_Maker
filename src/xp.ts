@@ -104,3 +104,29 @@ export function targetName(c: Pick<Campaign, 'stats' | 'abilities'>, t: Target):
   if (t.type === 'stat') return c.stats.find((s) => s.id === t.id)?.name ?? t.id;
   return c.abilities.find((a) => a.id === t.id)?.name ?? t.id;
 }
+
+export const SPEND_AMOUNT = 1;
+
+export function spendRoom(c: Pick<Campaign, 'abilities' | 'rules'>, t: Target, xp: number): number {
+  if (t.type === 'stat') return Infinity;
+  const def = c.abilities.find((a) => a.id === t.id);
+  const cap = def ? abilityCap(def, c.rules) : undefined;
+  return cap === undefined ? Infinity : Math.max(0, cumXp(cap, c.rules) - xp);
+}
+
+export function canSpendOn(c: Pick<Campaign, 'stats' | 'abilities' | 'rules'>, p: Player, t: Target): boolean {
+  if (t.type === 'stat') return c.stats.find((s) => s.id === t.id)?.kind === 'secondary';
+  const def = c.abilities.find((a) => a.id === t.id);
+  return !!def && isUnlocked(c, p, def) && spendRoom(c, t, p.abilities[t.id] ?? 0) > 0;
+}
+
+export function spendPreview(xp: number, room: number, rules: Rules, mult = 1) {
+  const gain = Math.min(round4(SPEND_AMOUNT * mult), room);
+  const now = levelInfo(xp, rules);
+  const next = levelInfo(xp + gain, rules);
+  return {
+    label: formatLevel(xp + gain, rules),
+    from: now.progress * 100,
+    to: next.level > now.level ? 100 : next.progress * 100,
+  };
+}

@@ -2,11 +2,17 @@ import { useState, type ReactNode } from 'react';
 import type { Rules, Target } from '../types';
 import { levelInfo } from '../xp';
 
-export function Bar({ xp, rules, full }: { xp: number; rules: Rules; full?: boolean }) {
+interface Ghost {
+  from: number;
+  to: number;
+}
+
+export function Bar({ xp, rules, full, ghost }: { xp: number; rules: Rules; full?: boolean; ghost?: Ghost | null }) {
   const pct = full ? 100 : levelInfo(xp, rules).progress * 100;
   return (
     <div className="bar">
       <div className="fill" style={{ width: `${pct}%` }} />
+      {ghost && <div className="bar-ghost" style={{ left: `${ghost.from}%`, width: `${ghost.to - ghost.from}%` }} />}
     </div>
   );
 }
